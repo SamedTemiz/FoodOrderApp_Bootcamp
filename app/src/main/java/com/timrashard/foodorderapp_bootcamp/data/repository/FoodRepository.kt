@@ -16,30 +16,30 @@ class FoodRepository @Inject constructor(
         return foodApi.getAllFoods()
     }
 
-    suspend fun getAllCartFoods(kullanici_adi: String): SepetResponse {
-        return foodApi.getAllCartFoods(kullanici_adi)
+    suspend fun getAllCartFoods(kullaniciAdi: String): SepetResponse {
+        return foodApi.getAllCartFoods(kullaniciAdi)
     }
 
     suspend fun addFoodToCart(
-        yemek_adi: String,
-        yemek_resim_adi: String,
-        yemek_fiyat: Int,
-        yemek_siparis_adet: Int,
-        kullanici_adi: String
+        yemekAdi: String,
+        yemekResimAdi: String,
+        yemekFiyat: Int,
+        yemekSiparisAdet: Int,
+        kullaniciAdi: String
     ): ApiResponse {
         return foodApi.addFoodToCart(
-            yemek_adi = yemek_adi,
-            yemek_resim_adi = yemek_resim_adi,
-            yemek_fiyat = yemek_fiyat,
-            yemek_siparis_adet = yemek_siparis_adet,
-            kullanici_adi = kullanici_adi
+            yemek_adi = yemekAdi,
+            yemek_resim_adi = yemekResimAdi,
+            yemek_fiyat = yemekFiyat,
+            yemek_siparis_adet = yemekSiparisAdet,
+            kullanici_adi = kullaniciAdi
         )
     }
 
-    suspend fun deleteFoodFromCart(sepet_yemek_id: Int, kullanici_adi: String): ApiResponse {
+    suspend fun deleteFoodFromCart(sepetYemekId: Int, kullaniciAdi: String): ApiResponse {
         return foodApi.deleteFoodFromCart(
-            sepet_yemek_id = sepet_yemek_id,
-            kullanici_adi = kullanici_adi
+            sepet_yemek_id = sepetYemekId,
+            kullanici_adi = kullaniciAdi
         )
     }
 }
