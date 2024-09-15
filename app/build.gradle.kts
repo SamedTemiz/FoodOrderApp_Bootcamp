@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
-    id("com.google.gms.google-services")
 }
 
 android {
@@ -72,6 +71,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel:2.8.5")
     implementation("androidx.activity:activity-ktx:1.9.2")
     implementation("androidx.compose.runtime:runtime-livedata:1.7.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.5")
 
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.8.0")
