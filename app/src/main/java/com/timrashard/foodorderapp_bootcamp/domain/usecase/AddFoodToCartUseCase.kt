@@ -15,11 +15,11 @@ class AddFoodToCartUseCase @Inject constructor(
         kullanici_adi: String
     ): ApiResponse {
         return foodRepository.addFoodToCart(
-            yemek_adi = yemek_adi,
-            yemek_resim_adi = yemek_resim_adi,
-            yemek_fiyat = yemek_fiyat,
-            yemek_siparis_adet = yemek_siparis_adet,
-            kullanici_adi = kullanici_adi
+            yemekAdi = yemek_adi,
+            yemekResimAdi = yemek_resim_adi,
+            yemekFiyat = yemek_fiyat,
+            yemekSiparisAdet = yemek_siparis_adet,
+            kullaniciAdi = kullanici_adi
         )
     }
 }
