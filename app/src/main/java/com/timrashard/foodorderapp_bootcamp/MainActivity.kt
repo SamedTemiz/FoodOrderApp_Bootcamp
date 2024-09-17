@@ -1,47 +1,52 @@
 package com.timrashard.foodorderapp_bootcamp
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.MainViewModel
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
+import androidx.navigation.compose.rememberNavController
+import com.timrashard.foodorderapp_bootcamp.presentation.navigation.Screen
+import com.timrashard.foodorderapp_bootcamp.presentation.screen.CartScreen
+import com.timrashard.foodorderapp_bootcamp.presentation.screen.DashboardScreen
+import com.timrashard.foodorderapp_bootcamp.presentation.screen.DetailsScreen
+import com.timrashard.foodorderapp_bootcamp.presentation.screen.FavoritesScreen
+import com.timrashard.foodorderapp_bootcamp.presentation.screen.HomeScreen
+import com.timrashard.foodorderapp_bootcamp.presentation.screen.OrdersScreen
 import com.timrashard.foodorderapp_bootcamp.ui.theme.FoodOrderApp_BootcampTheme
-import com.timrashard.foodorderapp_bootcamp.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val mainViewModel: MainViewModel by viewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
-            val yemekler by mainViewModel.foods.collectAsState()
+            val navController = rememberNavController()
 
             FoodOrderApp_BootcampTheme {
-                when (yemekler) {
-                    is Resource.Loading -> {
-                        Log.e("Yemekler", "Loading")
-                    }
-
-                    is Resource.Success -> {
-                        yemekler.data?.yemekler?.forEach{ yemek ->
-                            Log.e("Yemekler", yemek.yemek_adi)
+                Surface(
+                    color = Color.White,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    NavHost(navController = navController, startDestination = "dashboard" ){
+                        navigation(
+                            route = "dashboard",
+                            startDestination = "main",
+                        ){
+                            composable(route = "main") {
+                                DashboardScreen(navController = navController)
+                            }
                         }
-                    }
 
-                    is Resource.Error -> {
-                        Log.e("Yemekler", yemekler.message.toString())
+                        composable(route = Screen.Details.route) {
+                            DetailsScreen(navController = navController)
+                        }
                     }
                 }
             }
