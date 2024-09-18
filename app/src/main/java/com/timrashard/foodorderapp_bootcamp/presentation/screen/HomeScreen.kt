@@ -40,7 +40,7 @@ import com.timrashard.foodorderapp_bootcamp.presentation.component.SearchBarComp
 import com.timrashard.foodorderapp_bootcamp.presentation.component.fadingEdge
 import com.timrashard.foodorderapp_bootcamp.presentation.navigation.Screen
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.HomeViewModel
-import com.timrashard.foodorderapp_bootcamp.ui.theme.Gray
+import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftGray
 import kotlinx.coroutines.launch
 
 @Composable
@@ -118,7 +118,7 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .fadingEdge(
-                    brush = Brush.verticalGradient(0.85f to Gray, 1f to Color.Transparent)
+                    brush = Brush.verticalGradient(0.85f to SoftGray, 1f to Color.Transparent)
                 )
         ) {
             if (searchText.value.isNotEmpty()) {

@@ -25,7 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.timrashard.foodorderapp_bootcamp.domain.model.ChipItem
-import com.timrashard.foodorderapp_bootcamp.ui.theme.Gray
+import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftGray
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SmokeWhite
 import kotlinx.coroutines.launch
 
@@ -76,9 +76,9 @@ fun HorizontalChipMenuComponent(
                 },
                 colors = AssistChipDefaults.assistChipColors(
                     containerColor = if (selectedIndex == index) SmokeWhite else Color.Transparent,
-                    labelColor = if (selectedIndex == index) Color.Black else Gray,
+                    labelColor = if (selectedIndex == index) Color.Black else SoftGray,
                 ),
-                border = BorderStroke(1.dp, if (selectedIndex == index) Color.Black else Gray)
+                border = BorderStroke(1.dp, if (selectedIndex == index) Color.Black else SoftGray)
             )
         }
     }

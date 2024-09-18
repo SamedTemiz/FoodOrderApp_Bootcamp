@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.timrashard.foodorderapp_bootcamp.R
+import com.timrashard.foodorderapp_bootcamp.presentation.component.MainButtonComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.component.fadingEdge
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SmokeWhite
 import com.timrashard.foodorderapp_bootcamp.ui.theme.StarYellow
@@ -197,17 +198,10 @@ fun DetailsScreen(
                         )
                     }
 
-                    Button(
-                        onClick = { /*TODO*/ },
-                        shape = RoundedCornerShape(15.dp),
+                    MainButtonComponent(
+                        text = "Add to cart",
                         modifier = Modifier.weight(1f)
-                    ) {
-                        Text(
-                            text = "Add to cart",
-                            fontSize = 24.sp,
-                            modifier = Modifier.padding(vertical = 10.dp)
-                        )
-                    }
+                    )
                 }
             }
         }

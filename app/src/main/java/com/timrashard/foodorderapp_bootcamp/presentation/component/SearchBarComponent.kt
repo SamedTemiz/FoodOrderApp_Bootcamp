@@ -1,6 +1,5 @@
 package com.timrashard.foodorderapp_bootcamp.presentation.component
 
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
@@ -14,7 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.timrashard.foodorderapp_bootcamp.ui.theme.Gray
+import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftGray
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SmokeWhite
 
 @Composable
@@ -50,9 +49,9 @@ fun SearchBarComponent(
         },
         colors = TextFieldDefaults.colors(
             unfocusedContainerColor = SmokeWhite,
-            unfocusedLeadingIconColor = Gray,
-            unfocusedTextColor = Gray,
-            unfocusedPlaceholderColor = Gray,
+            unfocusedLeadingIconColor = SoftGray,
+            unfocusedTextColor = SoftGray,
+            unfocusedPlaceholderColor = SoftGray,
             focusedContainerColor = SmokeWhite,
             focusedLeadingIconColor = Color.Black,
             focusedTextColor = Color.Black,
