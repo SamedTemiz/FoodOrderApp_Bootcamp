@@ -14,4 +14,5 @@ sealed class Screen(val route: String, val label: String, val icon: Int = R.draw
     // Others
 
     object Details : Screen(route = "details", label = "Detail")
+    object Success : Screen(route = "success", label = "Success")
 }

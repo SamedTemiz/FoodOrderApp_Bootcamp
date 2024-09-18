@@ -18,6 +18,7 @@ import com.timrashard.foodorderapp_bootcamp.presentation.screen.DetailsScreen
 import com.timrashard.foodorderapp_bootcamp.presentation.screen.FavoritesScreen
 import com.timrashard.foodorderapp_bootcamp.presentation.screen.HomeScreen
 import com.timrashard.foodorderapp_bootcamp.presentation.screen.OrdersScreen
+import com.timrashard.foodorderapp_bootcamp.presentation.screen.SuccessScreen
 import com.timrashard.foodorderapp_bootcamp.ui.theme.FoodOrderApp_BootcampTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -34,7 +35,7 @@ class MainActivity : ComponentActivity() {
                     color = Color.White,
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    NavHost(navController = navController, startDestination = "dashboard" ){
+                    NavHost(navController = navController, startDestination = Screen.Success.route ){
                         navigation(
                             route = "dashboard",
                             startDestination = "main",
@@ -50,6 +51,10 @@ class MainActivity : ComponentActivity() {
 
                         composable(route = Screen.Cart.route) {
                             CartScreen(navController = navController)
+                        }
+
+                        composable(route = Screen.Success.route) {
+                            SuccessScreen()
                         }
                     }
                 }
