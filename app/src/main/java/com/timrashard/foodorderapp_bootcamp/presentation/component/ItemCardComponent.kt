@@ -31,7 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.timrashard.foodorderapp_bootcamp.R
-import com.timrashard.foodorderapp_bootcamp.ui.theme.Gray
+import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftGray
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftPink
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftRed
 import com.timrashard.foodorderapp_bootcamp.ui.theme.StarYellow
@@ -118,7 +118,7 @@ fun ItemCardComponent(
                             text = "4.8",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = Gray,
+                            color = SoftGray,
                         )
                     }
 
@@ -127,14 +127,14 @@ fun ItemCardComponent(
                         modifier = Modifier
                             .height(20.dp)
                             .padding(horizontal = 8.dp),
-                        color = Gray
+                        color = SoftGray
                     )
 
                     Text(
                         text = "330 ml",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Gray,
+                        color = SoftGray,
                         modifier = Modifier.weight(1f)
                     )
                 }

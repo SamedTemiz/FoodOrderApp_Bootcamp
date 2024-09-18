@@ -47,6 +47,10 @@ class MainActivity : ComponentActivity() {
                         composable(route = Screen.Details.route) {
                             DetailsScreen(navController = navController)
                         }
+
+                        composable(route = Screen.Cart.route) {
+                            CartScreen(navController = navController)
+                        }
                     }
                 }
             }

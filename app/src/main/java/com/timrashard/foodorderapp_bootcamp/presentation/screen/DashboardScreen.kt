@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -25,7 +24,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
@@ -35,7 +33,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -45,7 +42,7 @@ import androidx.navigation.compose.rememberNavController
 import com.timrashard.foodorderapp_bootcamp.R
 import com.timrashard.foodorderapp_bootcamp.presentation.component.DrawerContent
 import com.timrashard.foodorderapp_bootcamp.presentation.navigation.Screen
-import com.timrashard.foodorderapp_bootcamp.ui.theme.Gray
+import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftGray
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftPink
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -78,7 +75,7 @@ fun DashboardScreen(
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = {
-
+                        navController.navigate(Screen.Cart.route)
                     },
                     shape = CircleShape,
                     containerColor = SoftPink,
@@ -108,7 +105,7 @@ fun DashboardScreen(
                     }
 
                     composable(route = Screen.Cart.route) {
-                        CartScreen()
+//                        CartScreen()
                     }
 
                     composable(route = Screen.Favorites.route) {
@@ -208,7 +205,7 @@ fun BottomAppBarComponent(navController: NavController) {
                     Icon(
                         painter = painterResource(id = screen.icon),
                         contentDescription = null,
-                        tint = if (currentRoute == screen.route) Color.Black else Gray
+                        tint = if (currentRoute == screen.route) Color.Black else SoftGray
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
