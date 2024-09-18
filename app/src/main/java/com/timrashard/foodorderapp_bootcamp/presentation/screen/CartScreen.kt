@@ -30,8 +30,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
@@ -51,6 +49,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
@@ -62,9 +61,8 @@ import androidx.navigation.NavController
 import com.timrashard.foodorderapp_bootcamp.R
 import com.timrashard.foodorderapp_bootcamp.presentation.component.DashedDividerComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.component.MainButtonComponent
-import com.timrashard.foodorderapp_bootcamp.ui.theme.BgBlack
-import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftGray
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SmokeWhite
+import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftGray
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftOrange
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftPink
 
@@ -151,7 +149,11 @@ fun CartDetails(
 
     Column(
         verticalArrangement = Arrangement.Bottom,
-        modifier = modifier.padding(bottom = 16.dp)
+        modifier = modifier .background(
+            brush = Brush.verticalGradient(
+                colors = listOf(Color.White, SoftPink)
+            )
+        )
     ) {
         Column(
             verticalArrangement = Arrangement.Bottom,
@@ -280,6 +282,7 @@ fun CartDetails(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp)
+                .padding(bottom = 16.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -323,7 +326,9 @@ fun CartItem() {
                 .padding(vertical = 8.dp, horizontal = 12.dp)
         ) {
             Checkbox(
-                checked = true, onCheckedChange = {}, colors = CheckboxDefaults.colors(
+                checked = true,
+                onCheckedChange = {},
+                colors = CheckboxDefaults.colors(
                     checkedColor = SoftOrange,
                 )
             )

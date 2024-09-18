@@ -47,7 +47,6 @@ import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftPink
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-
 @Composable
 fun DashboardScreen(
     navController: NavController
@@ -102,10 +101,6 @@ fun DashboardScreen(
                 ) {
                     composable(route = Screen.Home.route) {
                         HomeScreen(mainNavController = navController)
-                    }
-
-                    composable(route = Screen.Cart.route) {
-//                        CartScreen()
                     }
 
                     composable(route = Screen.Favorites.route) {
@@ -181,7 +176,6 @@ fun BottomAppBarComponent(navController: NavController) {
 
     val items = listOf(
         Screen.Home,
-        Screen.Cart,
         Screen.Favorites,
         Screen.Orders,
     )
