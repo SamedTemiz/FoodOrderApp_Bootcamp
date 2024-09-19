@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "555622385383",
+    "project_id": "foodorderapp-3c9b0",
+    "storage_bucket": "foodorderapp-3c9b0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:555622385383:android:bbb6f0c0af649c08210442",
+        "android_client_info": {
+          "package_name": "com.timrashard.foodorderapp_bootcamp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuN7_-E_c6lxvM1uZmHieO1YbmNXDT__U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

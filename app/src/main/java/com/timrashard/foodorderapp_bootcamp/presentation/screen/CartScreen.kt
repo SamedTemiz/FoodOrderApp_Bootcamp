@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -42,7 +43,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -59,18 +63,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.timrashard.foodorderapp_bootcamp.R
+import com.timrashard.foodorderapp_bootcamp.data.model.SepetResponse
+import com.timrashard.foodorderapp_bootcamp.data.model.SepetYemekler
 import com.timrashard.foodorderapp_bootcamp.presentation.component.DashedDividerComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.component.MainButtonComponent
+import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.SharedViewModel
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SmokeWhite
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftGray
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftOrange
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftPink
+import com.timrashard.foodorderapp_bootcamp.utils.Resource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CartScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: SharedViewModel
 ) {
+    val cartFoodState by viewModel.cartFoods.collectAsState()
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -114,21 +125,52 @@ fun CartScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            LazyColumn(
-                contentPadding = PaddingValues(
-                    start = 20.dp,
-                    end = 20.dp,
-                    top = 4.dp,
-                    bottom = 200.dp
-                ),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(6) {
-                    CartItem()
+            when (cartFoodState) {
+                is Resource.Loading -> {
+
+                }
+
+                is Resource.Success -> {
+                    val cartFoodList = (cartFoodState as Resource.Success).data?.sepet_yemekler
+
+                    cartFoodList?.let { list ->
+                        LazyColumn(
+                            contentPadding = PaddingValues(
+                                start = 20.dp,
+                                end = 20.dp,
+                                top = 4.dp,
+                                bottom = 200.dp
+                            ),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            items(list) { food ->
+                                CartItem(food = food,
+                                    onCounterPlusClick = {
+                                        viewModel.addFoodToCart(food, 1)
+                                        viewModel.calculateTotalPrice(list)
+                                    },
+                                    onCounterMinusClick = {
+                                        if (food.yemek_siparis_adet > 1) {
+                                            viewModel.addFoodToCart(food, -1)
+                                            viewModel.calculateTotalPrice(list)
+                                        } else {
+                                            viewModel.deleteFoodFromCart(food)
+                                            viewModel.calculateTotalPrice(list)
+                                        }
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+
+                is Resource.Error -> {
+
                 }
             }
 
             CartDetails(
+                viewModel = viewModel,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
@@ -140,8 +182,11 @@ fun CartScreen(
 
 @Composable
 fun CartDetails(
+    viewModel: SharedViewModel,
     modifier: Modifier
 ) {
+    val totalPrice by viewModel.totalPrice.collectAsState()
+
     var expanded by remember { mutableStateOf(false) }
     val rotationState by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f
@@ -149,7 +194,7 @@ fun CartDetails(
 
     Column(
         verticalArrangement = Arrangement.Bottom,
-        modifier = modifier .background(
+        modifier = modifier.background(
             brush = Brush.verticalGradient(
                 colors = listOf(Color.White, SoftPink)
             )
@@ -266,7 +311,7 @@ fun CartDetails(
                 )
 
                 Text(
-                    text = "₺27,90",
+                    text = "₺$totalPrice",
                     color = SoftOrange,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
@@ -293,7 +338,7 @@ fun CartDetails(
                 Spacer(modifier = Modifier.width(2.dp))
 
                 Text(
-                    text = "30",
+                    text = totalPrice.toString(),
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
                 )
@@ -308,7 +353,21 @@ fun CartDetails(
 }
 
 @Composable
-fun CartItem() {
+fun CartItem(
+    food: SepetYemekler,
+    onCounterPlusClick: (Int) -> Unit,
+    onCounterMinusClick: (Int) -> Unit
+) {
+    var counter by remember { mutableStateOf(1) }
+    var totalPrice by remember { mutableStateOf(food.yemek_fiyat) }
+
+    LaunchedEffect(food) {
+        if (food.yemek_siparis_adet > 1) {
+            counter = food.yemek_siparis_adet
+            totalPrice = counter * food.yemek_fiyat
+        }
+    }
+
     ElevatedCard(
         onClick = {},
         colors = CardDefaults.cardColors(
@@ -358,9 +417,9 @@ fun CartItem() {
                         .weight(1f)
                         .padding(start = 8.dp)
                 ) {
-                    Text(text = "İçecek", fontSize = 16.sp, color = SoftOrange)
+                    Text(text = "Drink", fontSize = 16.sp, color = SoftOrange)
 
-                    Text(text = "Ayran", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                    Text(text = food.yemek_adi, fontSize = 18.sp, fontWeight = FontWeight.Bold)
 
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -368,13 +427,13 @@ fun CartItem() {
                     ) {
                         Row() {
                             Text(
-                                text = "₺30",
+                                text = totalPrice.toString(),
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier.alignByBaseline()
                             )
                             Text(
-                                text = "₺30",
+                                text = food.yemek_fiyat.toString(),
                                 fontSize = 14.sp,
                                 color = SoftGray,
                                 fontWeight = FontWeight.Bold,
@@ -392,7 +451,11 @@ fun CartItem() {
                         ) {
                             IconButton(
                                 onClick = {
-                                    // TODO
+                                    if (counter > 1) {
+                                        counter--
+                                        totalPrice = counter * food.yemek_fiyat
+                                        onCounterMinusClick(counter)
+                                    }
                                 },
                                 modifier = Modifier
                                     .background(color = SmokeWhite, shape = CircleShape)
@@ -406,14 +469,16 @@ fun CartItem() {
                             }
 
                             Text(
-                                text = "1",
+                                text = counter.toString(),
                                 fontSize = 18.sp,
                                 modifier = Modifier.padding(horizontal = 4.dp)
                             )
 
                             IconButton(
                                 onClick = {
-                                    // TODO
+                                    counter++
+                                    totalPrice = counter * food.yemek_fiyat
+                                    onCounterPlusClick(counter)
                                 },
                                 modifier = Modifier
                                     .background(color = Color.Black, shape = CircleShape)

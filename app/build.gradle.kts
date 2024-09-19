@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -93,4 +94,7 @@ dependencies {
 
     // Lottie
     implementation("com.github.LottieFiles:dotlottie-android:0.3.0")
+
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
 }

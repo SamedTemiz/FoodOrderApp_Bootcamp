@@ -43,13 +43,15 @@ import androidx.navigation.NavController
 import com.timrashard.foodorderapp_bootcamp.R
 import com.timrashard.foodorderapp_bootcamp.presentation.component.MainButtonComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.component.fadingEdge
+import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.SharedViewModel
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SmokeWhite
 import com.timrashard.foodorderapp_bootcamp.ui.theme.StarYellow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailsScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: SharedViewModel
 ) {
 
     val itemCount = remember { mutableIntStateOf(1) }
