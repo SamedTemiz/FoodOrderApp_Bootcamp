@@ -64,13 +64,13 @@ fun HomeScreen(
         Column(
             modifier = Modifier.padding(start = 20.dp)
         ) {
-            Text("Find and order", fontSize = 28.sp)
+            Text("Find and order", fontSize = 24.sp)
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text("your favorite food", fontSize = 28.sp, fontWeight = FontWeight.Bold)
+                Text("your favorite food", fontSize = 24.sp, fontWeight = FontWeight.Bold)
 
                 Box(
                     contentAlignment = Alignment.Center,
@@ -83,12 +83,11 @@ fun HomeScreen(
                         speed = 0.5f,
                         useFrameInterpolation = false,
                         playMode = Mode.FORWARD,
-                        modifier = Modifier.fillMaxSize().scale(2f)
+                        modifier = Modifier.fillMaxSize().scale(1.5f)
                     )
                 }
             }
         }
-
 
         SearchBarComponent(
             value = searchText.value,
@@ -118,14 +117,14 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .fadingEdge(
-                    brush = Brush.verticalGradient(0.85f to SoftGray, 1f to Color.Transparent)
+                    brush = Brush.verticalGradient(0.9f to SoftGray, 1f to Color.Transparent)
                 )
         ) {
             if (searchText.value.isNotEmpty()) {
                 item {
                     Text(
                         text = "Search result",
-                        fontSize = 22.sp,
+                        fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(start = 20.dp)
                     )
@@ -150,7 +149,7 @@ fun HomeScreen(
                 item {
                     Text(
                         text = "All",
-                        fontSize = 22.sp,
+                        fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(start = 20.dp)
                     )
@@ -175,7 +174,7 @@ fun HomeScreen(
                 item {
                     Text(
                         text = "Foods",
-                        fontSize = 22.sp,
+                        fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(start = 20.dp)
                     )
@@ -200,7 +199,7 @@ fun HomeScreen(
                 item {
                     Text(
                         text = "Drinks",
-                        fontSize = 22.sp,
+                        fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(start = 20.dp)
                     )
@@ -225,7 +224,7 @@ fun HomeScreen(
                 item {
                     Text(
                         text = "Desserts",
-                        fontSize = 22.sp,
+                        fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(start = 20.dp)
                     )

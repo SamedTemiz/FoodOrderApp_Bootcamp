@@ -28,8 +28,8 @@ fun MainButtonComponent(
     ) {
         Text(
             text = text,
-            fontSize = 24.sp,
-            modifier = Modifier.padding(vertical = 10.dp)
+            fontSize = 20.sp,
+            modifier = Modifier.padding(vertical = 8.dp)
         )
     }
 }

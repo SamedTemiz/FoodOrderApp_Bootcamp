@@ -58,7 +58,7 @@ fun HorizontalChipMenuComponent(
                     Text(
                         text = chip.label,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
+                        fontSize = 16.sp,
                         modifier = Modifier
                             .padding(end = 8.dp)
                             .padding(vertical = 10.dp)
@@ -71,7 +71,7 @@ fun HorizontalChipMenuComponent(
                         tint = Color.Unspecified,
                         modifier = Modifier
                             .padding(start = 8.dp)
-                            .size(24.dp)
+                            .size(20.dp)
                     )
                 },
                 colors = AssistChipDefaults.assistChipColors(

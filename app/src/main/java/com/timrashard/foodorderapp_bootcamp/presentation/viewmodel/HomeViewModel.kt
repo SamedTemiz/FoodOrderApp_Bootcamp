@@ -1,7 +1,5 @@
 package com.timrashard.foodorderapp_bootcamp.presentation.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.timrashard.foodorderapp_bootcamp.R
 import com.timrashard.foodorderapp_bootcamp.domain.model.ChipItem
@@ -10,9 +8,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor() : ViewModel(){
-
-
-
 
     fun filterWithChip(chipCategory: Int) {
         // 0 -> Tümü (All)

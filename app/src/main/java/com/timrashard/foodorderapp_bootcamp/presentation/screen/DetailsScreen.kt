@@ -185,13 +185,13 @@ fun DetailsScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth(0.4f)
                     ) {
-                        Text(text = "₺", fontSize = 28.sp)
+                        Text(text = "₺", fontSize = 24.sp)
 
                         Spacer(modifier = Modifier.width(2.dp))
 
                         Text(
                             text = "30",
-                            fontSize = 36.sp,
+                            fontSize = 32.sp,
                             fontWeight = FontWeight.Bold,
                         )
                     }
