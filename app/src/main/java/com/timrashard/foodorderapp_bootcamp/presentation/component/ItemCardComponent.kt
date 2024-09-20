@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,9 +29,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import com.timrashard.foodorderapp_bootcamp.R
+import com.timrashard.foodorderapp_bootcamp.common.Constants
+import com.timrashard.foodorderapp_bootcamp.data.model.Yemekler
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftGray
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftPink
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftRed
@@ -38,9 +44,11 @@ import com.timrashard.foodorderapp_bootcamp.ui.theme.StarYellow
 
 @Composable
 fun ItemCardComponent(
+    food: Yemekler,
     onFavoriteClick: () -> Unit,
     onItemClick: () -> Unit
 ) {
+    val imageUrl = Constants.IMAGE_URL + food.yemek_resim_adi
     val isFavorite = remember { mutableStateOf(false) }
 
     ElevatedCard(
@@ -87,14 +95,27 @@ fun ItemCardComponent(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxSize()
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ayran),
-                    contentDescription = "Ayran image",
+                Box(
+                    contentAlignment = Alignment.Center,
                     modifier = Modifier.size(100.dp)
-                )
+                ){
+                    SubcomposeAsyncImage(
+                        model = imageUrl,
+                        contentDescription = "Food Image",
+                        modifier = Modifier.fillMaxSize(),
+                        loading = {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp)
+                            )
+                        },
+                        error = {
+                            Text(text = "Error loading image")
+                        }
+                    )
+                }
 
                 Text(
-                    text = "Ayran",
+                    text = food.yemek_adi,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -147,13 +168,11 @@ fun ItemCardComponent(
                     Spacer(modifier = Modifier.width(2.dp))
 
                     Text(
-                        text = "30",
+                        text = food.yemek_fiyat.toString(),
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
                     )
                 }
-
-
             }
         }
     }

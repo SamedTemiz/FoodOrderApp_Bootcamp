@@ -1,88 +1,85 @@
 package com.timrashard.foodorderapp_bootcamp.presentation.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.timrashard.foodorderapp_bootcamp.common.Constants
-import com.timrashard.foodorderapp_bootcamp.data.model.SepetResponse
 import com.timrashard.foodorderapp_bootcamp.data.model.SepetYemekler
-import com.timrashard.foodorderapp_bootcamp.data.model.YemeklerResponse
-import com.timrashard.foodorderapp_bootcamp.domain.usecase.AddFoodToCartUseCase
-import com.timrashard.foodorderapp_bootcamp.domain.usecase.DeleteFoodFromCartUseCase
-import com.timrashard.foodorderapp_bootcamp.domain.usecase.GetAllCartFoodsUseCase
-import com.timrashard.foodorderapp_bootcamp.domain.usecase.GetAllFoodsUseCase
-import com.timrashard.foodorderapp_bootcamp.utils.Resource
+import com.timrashard.foodorderapp_bootcamp.data.repository.FoodRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SharedViewModel @Inject constructor(
-    private val getAllCartFoodsUseCase: GetAllCartFoodsUseCase,
-    private val addFoodToCartUseCase: AddFoodToCartUseCase,
-    private val deleteFoodFromCartUseCase: DeleteFoodFromCartUseCase
+    private val foodRepository: FoodRepository
 ) : ViewModel() {
 
-    private val _cartFoods = MutableStateFlow<Resource<SepetResponse>>(Resource.Loading())
-    val cartFoods: StateFlow<Resource<SepetResponse>> = _cartFoods
+    private val _cartFoods = MutableStateFlow<List<SepetYemekler>>(emptyList())
+    val cartFoods: StateFlow<List<SepetYemekler>> = _cartFoods
 
     private val _totalPrice = MutableStateFlow(0)
-    val totalPrice : StateFlow<Int> = _totalPrice
+    val totalPrice: StateFlow<Int> = _totalPrice
 
-    fun calculateTotalPrice(foodList: List<SepetYemekler>) {
-        val totalPrice = foodList.sumOf { it.yemek_fiyat * it.yemek_siparis_adet }
-        _totalPrice.value = totalPrice
+    init {
+        fetchCartFoods()
     }
 
-    fun getCartFoods() {
+    fun fetchCartFoods() {
         viewModelScope.launch {
-            getAllCartFoodsUseCase.invoke(Constants.USER_NAME).collect { resource ->
-                _cartFoods.value = resource
+            foodRepository.getAllCartFoods().collectLatest { list ->
+                Log.d("SharedViewModel", "Fetched cart foods: $list")
+                _cartFoods.value = list
             }
         }
     }
 
-    fun addFoodToCart(sepetYemekler: SepetYemekler, siparisAdet: Int) {
-        viewModelScope.launch {
-            val currentCart = _cartFoods.value
-            if (currentCart is Resource.Success) {
-                val existingFood = currentCart.data?.sepet_yemekler?.find {
-                    it.yemek_adi == sepetYemekler.yemek_adi
-                }
-
-                if (existingFood != null) {
-                    val updatedFood = existingFood.copy(
-                        yemek_siparis_adet = existingFood.yemek_siparis_adet + siparisAdet
-                    )
-
-                    val updatedCartList = currentCart.data.sepet_yemekler.toMutableList().apply {
-                        remove(existingFood)
-                        add(updatedFood)
-                    }
-                    _cartFoods.value = Resource.Success(currentCart.data.copy(sepet_yemekler = updatedCartList))
-                } else {
-                    addFoodToCartUseCase.invoke(
-                        yemek_adi = sepetYemekler.yemek_adi,
-                        yemek_resim_adi = sepetYemekler.yemek_resim_adi,
-                        yemek_fiyat = sepetYemekler.yemek_fiyat,
-                        yemek_siparis_adet = siparisAdet,
-                        kullanici_adi = Constants.USER_NAME
-                    )
-                }
-            }
-        }
+    fun calculateTotalPrice() {
+        val foodList = cartFoods.value
+        _totalPrice.value = foodList.sumOf { it.yemek_siparis_adet * it.yemek_fiyat }
     }
 
-
-    fun deleteFoodFromCart(sepetYemekler: SepetYemekler){
+    fun addFoodToCart(yemek: SepetYemekler, isDetails: Boolean) {
         viewModelScope.launch {
-            deleteFoodFromCartUseCase.invoke(
-                sepet_yemek_id = sepetYemekler.sepet_yemek_id,
-                kullanici_adi = Constants.USER_NAME
+            var siparisAdet: Int = yemek.yemek_siparis_adet
+
+            val existingFood = cartFoods.value.find {
+                it.sepet_yemek_id == yemek.sepet_yemek_id || it.yemek_adi == yemek.yemek_adi
+            }
+
+            if (existingFood != null) {
+                siparisAdet = if (isDetails) existingFood.yemek_siparis_adet + yemek.yemek_siparis_adet else yemek.yemek_siparis_adet
+                foodRepository.deleteFoodFromCart(existingFood.sepet_yemek_id)
+            }
+
+            foodRepository.addFoodToCart(
+                yemekAdi = yemek.yemek_adi,
+                yemekResimAdi = yemek.yemek_resim_adi,
+                yemekFiyat = yemek.yemek_fiyat,
+                yemekSiparisAdet = siparisAdet
             )
+
+            fetchCartFoods()
+        }
+    }
+
+    fun deleteFoodFromCart(sepetYemekler: SepetYemekler) {
+        viewModelScope.launch {
+            val result = foodRepository.deleteFoodFromCart(sepetYemekler.sepet_yemek_id)
+            Log.d("SharedViewModel", "Deleted ${sepetYemekler.yemek_adi} from cart")
+            fetchCartFoods()
+        }
+    }
+
+    fun clearCart() {
+        viewModelScope.launch {
+            cartFoods.value.forEach {
+                foodRepository.deleteFoodFromCart(it.sepet_yemek_id)
+                Log.d("SharedViewModel", "Cart is cleared")
+                _cartFoods.value = emptyList()
+            }
         }
     }
 }

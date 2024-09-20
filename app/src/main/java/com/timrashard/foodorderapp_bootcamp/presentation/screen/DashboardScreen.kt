@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -24,6 +26,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
@@ -33,6 +36,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -72,20 +77,31 @@ fun DashboardScreen(
                 BottomAppBarComponent(navController = dashBoardNavController)
             },
             floatingActionButton = {
-                FloatingActionButton(
-                    onClick = {
-                        navController.navigate(Screen.Cart.route)
-                    },
-                    shape = CircleShape,
-                    containerColor = SoftPink,
-                    modifier = Modifier.size(64.dp)
+                BadgedBox(
+                    badge = {
+                        Badge{
+                            val badgeNumber = "8"
+                            Text(text = badgeNumber, modifier = Modifier.semantics {
+                                contentDescription = "$badgeNumber new notifications"
+                            })
+                        }
+                    }
                 ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_cart),
-                        contentDescription = "Cart",
-                        tint = Color.Black,
-                        modifier = Modifier.size(32.dp)
-                    )
+                    FloatingActionButton(
+                        onClick = {
+                            navController.navigate(Screen.Cart.route)
+                        },
+                        shape = CircleShape,
+                        containerColor = SoftPink,
+                        modifier = Modifier.size(64.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_cart),
+                            contentDescription = "Cart",
+                            tint = Color.Black,
+                            modifier = Modifier.size(32.dp)
+                        )
+                    }
                 }
             }
         ) { paddingValues ->

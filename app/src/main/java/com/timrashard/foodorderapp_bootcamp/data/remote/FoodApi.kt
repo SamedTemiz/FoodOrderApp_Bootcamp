@@ -1,5 +1,6 @@
 package com.timrashard.foodorderapp_bootcamp.data.remote
 
+import com.timrashard.foodorderapp_bootcamp.common.Constants
 import com.timrashard.foodorderapp_bootcamp.data.model.ApiResponse
 import com.timrashard.foodorderapp_bootcamp.data.model.SepetResponse
 import com.timrashard.foodorderapp_bootcamp.data.model.YemeklerResponse
@@ -14,7 +15,7 @@ interface FoodApi {
     // BASE_URL: http://kasimadalan.pe.hu/
 
     // Tüm yemekleri getir          ->  yemekler/tumYemekleriGetir.php
-    // Sepetteki yemekleri getir:   ->  yemekler/sepettenYemekleriGetir.php
+    // Sepetteki yemekleri getir:   ->  yemekler/sepettekiYemekleriGetir.php
     // Sepete yemek ekleme:         ->  yemekler/sepeteYemekEkle.php
     // Sepetten yemek silme:        ->  yemekler/sepettenYemekSil.php
     // Yemek resimlerini alma:      ->  yemekler/resimler/yemek_adi.png
@@ -22,10 +23,10 @@ interface FoodApi {
     @GET("yemekler/tumYemekleriGetir.php")
     suspend fun getAllFoods(): YemeklerResponse
 
-    @POST("yemekler/sepettenYemekleriGetir.php")
+    @POST("yemekler/sepettekiYemekleriGetir.php")
     @FormUrlEncoded
     suspend fun getAllCartFoods(
-        @Field("kullanici_adi") kullanici_adi: String,
+        @Field("kullanici_adi") kullanici_adi: String = Constants.USER_NAME,
     ): SepetResponse
 
     @POST("yemekler/sepeteYemekEkle.php")
@@ -35,13 +36,13 @@ interface FoodApi {
         @Field("yemek_resim_adi") yemek_resim_adi: String,
         @Field("yemek_fiyat") yemek_fiyat: Int,
         @Field("yemek_siparis_adet") yemek_siparis_adet: Int,
-        @Field("kullanici_adi") kullanici_adi: String,
+        @Field("kullanici_adi") kullanici_adi: String = Constants.USER_NAME,
     ) : ApiResponse
 
     @POST("yemekler/sepettenYemekSil.php")
     @FormUrlEncoded
     suspend fun deleteFoodFromCart(
         @Field("sepet_yemek_id") sepet_yemek_id: Int,
-        @Field("kullanici_adi") kullanici_adi: String,
+        @Field("kullanici_adi") kullanici_adi: String = Constants.USER_NAME,
     ) : ApiResponse
 }

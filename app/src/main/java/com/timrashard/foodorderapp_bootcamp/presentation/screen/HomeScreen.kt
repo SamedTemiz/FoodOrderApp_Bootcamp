@@ -13,10 +13,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -31,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.dotlottie.dlplayer.Mode
+import com.google.gson.Gson
 import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
 import com.lottiefiles.dotlottie.core.util.DotLottieSource
 import com.timrashard.foodorderapp_bootcamp.domain.model.ChipItem
@@ -41,6 +46,7 @@ import com.timrashard.foodorderapp_bootcamp.presentation.component.fadingEdge
 import com.timrashard.foodorderapp_bootcamp.presentation.navigation.Screen
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.HomeViewModel
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftGray
+import com.timrashard.foodorderapp_bootcamp.utils.Resource
 import kotlinx.coroutines.launch
 
 @Composable
@@ -48,6 +54,8 @@ fun HomeScreen(
     mainNavController: NavController,
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
+    val foodListState by homeViewModel.foodList.collectAsState()
+
     val searchText = remember { mutableStateOf("") }
     val chipList = remember { mutableStateOf(listOf<ChipItem>()) }
     val listState = rememberLazyListState()
@@ -83,7 +91,9 @@ fun HomeScreen(
                         speed = 0.5f,
                         useFrameInterpolation = false,
                         playMode = Mode.FORWARD,
-                        modifier = Modifier.fillMaxSize().scale(1.5f)
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .scale(1.5f)
                     )
                 }
             }
@@ -110,141 +120,86 @@ fun HomeScreen(
             }
         )
 
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(bottom = 102.dp),
-            state = listState,
-            modifier = Modifier
-                .fillMaxSize()
-                .fadingEdge(
-                    brush = Brush.verticalGradient(0.9f to SoftGray, 1f to Color.Transparent)
-                )
-        ) {
-            if (searchText.value.isNotEmpty()) {
-                item {
-                    Text(
-                        text = "Search result",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.padding(start = 20.dp)
-                    )
+        when (foodListState) {
+            is Resource.Loading -> {
+                CircularProgressIndicator()
+            }
 
-                    Spacer(Modifier.height(16.dp))
+            is Resource.Success -> {
+                val foodList = foodListState.data?.yemekler ?: emptyList()
 
-                    LazyRow(
-                        contentPadding = PaddingValues(start = 20.dp, end = 20.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        items(6) {
-                            ItemCardComponent(
-                                onFavoriteClick = {},
-                                onItemClick = {
-                                    mainNavController.navigate(Screen.Details.route)
-                                }
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    contentPadding = PaddingValues(bottom = 102.dp),
+                    state = listState,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .fadingEdge(
+                            brush = Brush.verticalGradient(
+                                0.9f to SoftGray,
+                                1f to Color.Transparent
                             )
+                        )
+                ) {
+                    if (searchText.value.isEmpty()) {
+                        item {
+                            Text(
+                                text = "All",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier.padding(start = 20.dp)
+                            )
+
+                            Spacer(Modifier.height(8.dp))
+
+                            LazyRow(
+                                contentPadding = PaddingValues(start = 20.dp, end = 20.dp),
+                                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                items(foodList) { food ->
+                                    ItemCardComponent(
+                                        food = food,
+                                        onFavoriteClick = {},
+                                        onItemClick = {
+                                            val foodJson = Gson().toJson(food)
+                                            mainNavController.navigate(Screen.Details.route + "/$foodJson")
+                                        }
+                                    )
+                                }
+                            }
                         }
+                    } else {
+//                        item {
+//                            Text(
+//                                text = "Search result",
+//                                fontSize = 20.sp,
+//                                fontWeight = FontWeight.SemiBold,
+//                                modifier = Modifier.padding(start = 20.dp)
+//                            )
+//
+//                            Spacer(Modifier.height(16.dp))
+//
+//                            LazyRow(
+//                                contentPadding = PaddingValues(start = 20.dp, end = 20.dp),
+//                                horizontalArrangement = Arrangement.spacedBy(16.dp)
+//                            ) {
+//                                items(6) {
+//                                    ItemCardComponent(
+//                                        onFavoriteClick = {},
+//                                        onItemClick = {
+////                                    val foodJson = Gson().toJson(contact)
+//                                            mainNavController.navigate(Screen.Details.route)
+//                                        }
+//                                    )
+//                                }
+//                            }
+//                        }
                     }
                 }
-            } else {
-                item {
-                    Text(
-                        text = "All",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.padding(start = 20.dp)
-                    )
+            }
 
-                    Spacer(Modifier.height(8.dp))
+            is Resource.Error -> {
 
-                    LazyRow(
-                        contentPadding = PaddingValues(start = 20.dp, end = 20.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        items(6) {
-                            ItemCardComponent(
-                                onFavoriteClick = {},
-                                onItemClick = {
-                                    mainNavController.navigate(Screen.Details.route)
-                                }
-                            )
-                        }
-                    }
-                }
-
-                item {
-                    Text(
-                        text = "Foods",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.padding(start = 20.dp)
-                    )
-
-                    Spacer(Modifier.height(8.dp))
-
-                    LazyRow(
-                        contentPadding = PaddingValues(start = 20.dp, end = 20.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        items(6) {
-                            ItemCardComponent(
-                                onFavoriteClick = {},
-                                onItemClick = {
-                                    mainNavController.navigate(Screen.Details.route)
-                                }
-                            )
-                        }
-                    }
-                }
-
-                item {
-                    Text(
-                        text = "Drinks",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.padding(start = 20.dp)
-                    )
-
-                    Spacer(Modifier.height(8.dp))
-
-                    LazyRow(
-                        contentPadding = PaddingValues(start = 20.dp, end = 20.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        items(6) {
-                            ItemCardComponent(
-                                onFavoriteClick = {},
-                                onItemClick = {
-                                    mainNavController.navigate(Screen.Details.route)
-                                }
-                            )
-                        }
-                    }
-                }
-
-                item {
-                    Text(
-                        text = "Desserts",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.padding(start = 20.dp)
-                    )
-
-                    Spacer(Modifier.height(8.dp))
-
-                    LazyRow(
-                        contentPadding = PaddingValues(start = 20.dp, end = 20.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        items(6) {
-                            ItemCardComponent(
-                                onFavoriteClick = {},
-                                onItemClick = {
-                                    mainNavController.navigate(Screen.Details.route)
-                                }
-                            )
-                        }
-                    }
-                }
             }
         }
     }

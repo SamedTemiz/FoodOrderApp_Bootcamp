@@ -101,7 +101,9 @@ fun SuccessScreen() {
                 MainButtonComponent(
                     text = "Track order",
                     modifier = Modifier.padding(horizontal = 20.dp)
-                )
+                ){
+
+                }
 
                 Text(
                     text = "Back to shopping",

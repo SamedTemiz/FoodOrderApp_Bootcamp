@@ -15,10 +15,11 @@ import com.timrashard.foodorderapp_bootcamp.ui.theme.BgBlack
 @Composable
 fun MainButtonComponent(
     text: String,
-    modifier: Modifier
+    modifier: Modifier,
+    onClick: () -> Unit,
 ){
     Button(
-        onClick = { /*TODO*/ },
+        onClick = { onClick() },
         shape = RoundedCornerShape(15.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = BgBlack,

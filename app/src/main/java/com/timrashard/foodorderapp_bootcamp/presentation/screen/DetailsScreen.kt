@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,9 +41,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.SubcomposeAsyncImage
 import com.timrashard.foodorderapp_bootcamp.R
+import com.timrashard.foodorderapp_bootcamp.common.Constants
+import com.timrashard.foodorderapp_bootcamp.data.model.Yemekler
+import com.timrashard.foodorderapp_bootcamp.data.model.toSepetYemekler
 import com.timrashard.foodorderapp_bootcamp.presentation.component.MainButtonComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.component.fadingEdge
+import com.timrashard.foodorderapp_bootcamp.presentation.navigation.Screen
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.SharedViewModel
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SmokeWhite
 import com.timrashard.foodorderapp_bootcamp.ui.theme.StarYellow
@@ -51,9 +57,10 @@ import com.timrashard.foodorderapp_bootcamp.ui.theme.StarYellow
 @Composable
 fun DetailsScreen(
     navController: NavController,
-    viewModel: SharedViewModel
+    viewModel: SharedViewModel,
+    food: Yemekler
 ) {
-
+    val imageUrl = Constants.IMAGE_URL + food.yemek_resim_adi
     val itemCount = remember { mutableIntStateOf(1) }
 
     Box(
@@ -118,11 +125,19 @@ fun DetailsScreen(
                             .fillMaxWidth()
                             .height(250.dp)
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ayran),
-                            contentDescription = "Item",
+                        SubcomposeAsyncImage(
+                            model = imageUrl,
+                            contentDescription = "Food Image",
                             contentScale = ContentScale.Fit,
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.fillMaxSize(),
+                            loading = {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            },
+                            error = {
+                                Text(text = "Error loading image")
+                            }
                         )
                     }
 
@@ -147,7 +162,7 @@ fun DetailsScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "Ayran",
+                            text = food.yemek_adi,
                             fontSize = 28.sp,
                             fontWeight = FontWeight.Bold,
                             maxLines = 2,
@@ -192,7 +207,7 @@ fun DetailsScreen(
                         Spacer(modifier = Modifier.width(2.dp))
 
                         Text(
-                            text = "30",
+                            text = food.yemek_fiyat.toString(),
                             fontSize = 32.sp,
                             fontWeight = FontWeight.Bold,
                         )
@@ -201,7 +216,10 @@ fun DetailsScreen(
                     MainButtonComponent(
                         text = "Add to cart",
                         modifier = Modifier.weight(1f)
-                    )
+                    ){
+                        viewModel.addFoodToCart(food.toSepetYemekler(itemCount.intValue), isDetails = true)
+//                        navController.navigate(Screen.Cart.route)
+                    }
                 }
             }
         }

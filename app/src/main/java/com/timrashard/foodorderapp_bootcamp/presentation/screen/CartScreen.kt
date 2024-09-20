@@ -26,14 +26,18 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -47,11 +51,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -62,17 +68,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.SubcomposeAsyncImage
 import com.timrashard.foodorderapp_bootcamp.R
+import com.timrashard.foodorderapp_bootcamp.common.Constants
 import com.timrashard.foodorderapp_bootcamp.data.model.SepetResponse
 import com.timrashard.foodorderapp_bootcamp.data.model.SepetYemekler
 import com.timrashard.foodorderapp_bootcamp.presentation.component.DashedDividerComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.component.MainButtonComponent
+import com.timrashard.foodorderapp_bootcamp.presentation.navigation.Screen
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.SharedViewModel
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SmokeWhite
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftGray
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftOrange
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftPink
 import com.timrashard.foodorderapp_bootcamp.utils.Resource
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,7 +90,11 @@ fun CartScreen(
     navController: NavController,
     viewModel: SharedViewModel
 ) {
-    val cartFoodState by viewModel.cartFoods.collectAsState()
+    val cartFoodList by viewModel.cartFoods.collectAsState()
+
+    LaunchedEffect(cartFoodList) {
+        viewModel.calculateTotalPrice()
+    }
 
     Scaffold(
         topBar = {
@@ -95,7 +109,9 @@ fun CartScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = {
-                        navController.popBackStack()
+                        navController.navigate(Screen.Dashboard.route) {
+                            popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                        }
                     }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
@@ -104,7 +120,9 @@ fun CartScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        viewModel.clearCart()
+                    }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_more),
                             contentDescription = ""
@@ -125,47 +143,34 @@ fun CartScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            when (cartFoodState) {
-                is Resource.Loading -> {
-
-                }
-
-                is Resource.Success -> {
-                    val cartFoodList = (cartFoodState as Resource.Success).data?.sepet_yemekler
-
-                    cartFoodList?.let { list ->
-                        LazyColumn(
-                            contentPadding = PaddingValues(
-                                start = 20.dp,
-                                end = 20.dp,
-                                top = 4.dp,
-                                bottom = 200.dp
-                            ),
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
-                        ) {
-                            items(list) { food ->
-                                CartItem(food = food,
-                                    onCounterPlusClick = {
-                                        viewModel.addFoodToCart(food, 1)
-                                        viewModel.calculateTotalPrice(list)
-                                    },
-                                    onCounterMinusClick = {
-                                        if (food.yemek_siparis_adet > 1) {
-                                            viewModel.addFoodToCart(food, -1)
-                                            viewModel.calculateTotalPrice(list)
-                                        } else {
-                                            viewModel.deleteFoodFromCart(food)
-                                            viewModel.calculateTotalPrice(list)
-                                        }
-                                    }
-                                )
+            if (cartFoodList.isNotEmpty()) {
+                LazyColumn(
+                    contentPadding = PaddingValues(
+                        start = 20.dp,
+                        end = 20.dp,
+                        top = 4.dp,
+                        bottom = 200.dp
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(cartFoodList) { food ->
+                        CartItem(
+                            food = food,
+                            onDeleteClick = {
+                                viewModel.deleteFoodFromCart(food)
+                            },
+                            onCounterPlusClick = {
+                                val updatedFood = food.copy(yemek_siparis_adet = it)
+                                viewModel.addFoodToCart(updatedFood, isDetails = false)
+                                viewModel.calculateTotalPrice()
+                            },
+                            onCounterMinusClick = {
+                                val updatedFood = food.copy(yemek_siparis_adet = it)
+                                viewModel.addFoodToCart(updatedFood, isDetails = false)
+                                viewModel.calculateTotalPrice()
                             }
-                        }
+                        )
                     }
-                }
-
-                is Resource.Error -> {
-
                 }
             }
 
@@ -254,7 +259,11 @@ fun CartDetails(
                         ) {
                             Text(text = "Sub total", color = Color.DarkGray, fontSize = 18.sp)
 
-                            Text(text = "₺24,90", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                            Text(
+                                text = "₺$totalPrice",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp
+                            )
                         }
 
                         Row(
@@ -347,7 +356,9 @@ fun CartDetails(
             MainButtonComponent(
                 text = "Pay now",
                 modifier = Modifier.weight(1f)
-            )
+            ) {
+                // success ekranı
+            }
         }
     }
 }
@@ -355,42 +366,36 @@ fun CartDetails(
 @Composable
 fun CartItem(
     food: SepetYemekler,
+    onDeleteClick: () -> Unit,
     onCounterPlusClick: (Int) -> Unit,
     onCounterMinusClick: (Int) -> Unit
 ) {
-    var counter by remember { mutableStateOf(1) }
-    var totalPrice by remember { mutableStateOf(food.yemek_fiyat) }
-
-    LaunchedEffect(food) {
-        if (food.yemek_siparis_adet > 1) {
-            counter = food.yemek_siparis_adet
-            totalPrice = counter * food.yemek_fiyat
-        }
-    }
+    val imageUrl = Constants.IMAGE_URL + food.yemek_resim_adi
+    var counter by remember { mutableStateOf(food.yemek_siparis_adet) }
+    var totalPrice by remember { mutableStateOf(food.yemek_fiyat * counter) }
 
     ElevatedCard(
         onClick = {},
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        ),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         modifier = Modifier
             .fillMaxWidth()
             .height(125.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier
                 .fillMaxSize()
                 .padding(vertical = 8.dp, horizontal = 12.dp)
         ) {
-            Checkbox(
-                checked = true,
-                onCheckedChange = {},
-                colors = CheckboxDefaults.colors(
-                    checkedColor = SoftOrange,
-                )
-            )
+            Box(
+                modifier = Modifier.size(48.dp)
+            ) {
+                IconButton(onClick = {
+                    onDeleteClick()
+                }) {
+                    Icon(Icons.Default.Clear, contentDescription = "Delete")
+                }
+            }
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -403,10 +408,18 @@ fun CartItem(
                         .size(100.dp)
                         .background(color = SoftPink, shape = RoundedCornerShape(15.dp))
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ayran),
-                        contentDescription = "Item",
-                        modifier = Modifier.fillMaxSize()
+                    SubcomposeAsyncImage(
+                        model = imageUrl,
+                        contentDescription = "Food Image",
+                        modifier = Modifier.fillMaxSize(),
+                        loading = {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp)
+                            )
+                        },
+                        error = {
+                            Text(text = "Error loading image")
+                        }
                     )
                 }
 
@@ -418,7 +431,6 @@ fun CartItem(
                         .padding(start = 8.dp)
                 ) {
                     Text(text = "Drink", fontSize = 16.sp, color = SoftOrange)
-
                     Text(text = food.yemek_adi, fontSize = 18.sp, fontWeight = FontWeight.Bold)
 
                     Row(
@@ -427,13 +439,13 @@ fun CartItem(
                     ) {
                         Row() {
                             Text(
-                                text = totalPrice.toString(),
+                                text = "₺${totalPrice}",
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier.alignByBaseline()
                             )
                             Text(
-                                text = food.yemek_fiyat.toString(),
+                                text = "₺${food.yemek_fiyat}",
                                 fontSize = 14.sp,
                                 color = SoftGray,
                                 fontWeight = FontWeight.Bold,

@@ -1,23 +1,27 @@
 package com.timrashard.foodorderapp_bootcamp.data.repository
 
+import com.timrashard.foodorderapp_bootcamp.data.datasource.FoodDataSource
 import com.timrashard.foodorderapp_bootcamp.data.model.ApiResponse
 import com.timrashard.foodorderapp_bootcamp.data.model.SepetResponse
+import com.timrashard.foodorderapp_bootcamp.data.model.SepetYemekler
 import com.timrashard.foodorderapp_bootcamp.data.model.Yemekler
 import com.timrashard.foodorderapp_bootcamp.data.model.YemeklerResponse
-import com.timrashard.foodorderapp_bootcamp.data.remote.FoodApi
-import retrofit2.http.Field
+import com.timrashard.foodorderapp_bootcamp.utils.Resource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class FoodRepository @Inject constructor(
-    private val foodApi: FoodApi
+    private val foodDataSource: FoodDataSource
 ) {
 
-    suspend fun getAllFoods(): YemeklerResponse {
-        return foodApi.getAllFoods()
+    suspend fun getAllFoods(): Flow<Resource<YemeklerResponse>> {
+        return foodDataSource.getAllFoods()
     }
 
-    suspend fun getAllCartFoods(kullaniciAdi: String): SepetResponse {
-        return foodApi.getAllCartFoods(kullaniciAdi)
+    suspend fun getAllCartFoods(): Flow<List<SepetYemekler>> {
+        return foodDataSource.getAllCartFoods()
     }
 
     suspend fun addFoodToCart(
@@ -25,21 +29,16 @@ class FoodRepository @Inject constructor(
         yemekResimAdi: String,
         yemekFiyat: Int,
         yemekSiparisAdet: Int,
-        kullaniciAdi: String
     ): ApiResponse {
-        return foodApi.addFoodToCart(
-            yemek_adi = yemekAdi,
-            yemek_resim_adi = yemekResimAdi,
-            yemek_fiyat = yemekFiyat,
-            yemek_siparis_adet = yemekSiparisAdet,
-            kullanici_adi = kullaniciAdi
+        return foodDataSource.addFoodToCart(
+            yemekAdi = yemekAdi,
+            yemekResimAdi = yemekResimAdi,
+            yemekFiyat = yemekFiyat,
+            yemekSiparisAdet = yemekSiparisAdet
         )
     }
 
-    suspend fun deleteFoodFromCart(sepetYemekId: Int, kullaniciAdi: String): ApiResponse {
-        return foodApi.deleteFoodFromCart(
-            sepet_yemek_id = sepetYemekId,
-            kullanici_adi = kullaniciAdi
-        )
+    suspend fun deleteFoodFromCart(sepetYemekId: Int) {
+        foodDataSource.deleteFoodFromCart(sepetYemekId)
     }
 }

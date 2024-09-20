@@ -9,10 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.google.gson.Gson
+import com.timrashard.foodorderapp_bootcamp.data.model.Yemekler
 import com.timrashard.foodorderapp_bootcamp.presentation.navigation.Screen
 import com.timrashard.foodorderapp_bootcamp.presentation.screen.CartScreen
 import com.timrashard.foodorderapp_bootcamp.presentation.screen.DashboardScreen
@@ -54,10 +58,18 @@ fun FoodOrderApp() {
                     }
                 }
 
-                composable(route = Screen.Details.route) {
+                composable(route = Screen.Details.route + "/{yemekler}",
+                    arguments = listOf(
+                        navArgument("yemekler") { type = NavType.StringType }
+                    )
+                ) {
+                    val json = it.arguments?.getString("yemekler")
+                    val foodObject = Gson().fromJson(json, Yemekler::class.java)
+
                     DetailsScreen(
                         navController = navController,
-                        viewModel = sharedViewModel
+                        viewModel = sharedViewModel,
+                        food = foodObject
                     )
                 }
 
