@@ -218,7 +218,7 @@ fun DetailsScreen(
                         modifier = Modifier.weight(1f)
                     ){
                         viewModel.addFoodToCart(food.toSepetYemekler(itemCount.intValue), isDetails = true)
-//                        navController.navigate(Screen.Cart.route)
+                        navController.popBackStack()
                     }
                 }
             }

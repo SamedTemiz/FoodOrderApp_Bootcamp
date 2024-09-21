@@ -1,6 +1,7 @@
 package com.timrashard.foodorderapp_bootcamp.presentation.screen
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,22 +32,33 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.dotlottie.dlplayer.Mode
+import com.lottiefiles.dotlottie.core.compose.runtime.DotLottieController
+import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
+import com.lottiefiles.dotlottie.core.util.DotLottieSource
 import com.timrashard.foodorderapp_bootcamp.R
 import com.timrashard.foodorderapp_bootcamp.presentation.component.DrawerContent
 import com.timrashard.foodorderapp_bootcamp.presentation.navigation.Screen
+import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.SharedViewModel
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftGray
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftPink
 import kotlinx.coroutines.CoroutineScope
@@ -54,8 +66,11 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun DashboardScreen(
-    navController: NavController
+    navController: NavController,
+    sharedViewModel: SharedViewModel
 ) {
+    val cartItemCount by sharedViewModel.itemsCount.collectAsState()
+
     val dashBoardNavController = rememberNavController()
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -79,28 +94,63 @@ fun DashboardScreen(
             floatingActionButton = {
                 BadgedBox(
                     badge = {
-                        Badge{
-                            val badgeNumber = "8"
-                            Text(text = badgeNumber, modifier = Modifier.semantics {
-                                contentDescription = "$badgeNumber new notifications"
-                            })
+                        if (cartItemCount > 0) {
+                            Badge {
+                                val badgeNumber = cartItemCount.toString()
+                                Text(
+                                    text = badgeNumber,
+                                    fontSize = 14.sp,
+                                    modifier = Modifier.semantics {
+                                        contentDescription =
+                                            "$badgeNumber items in the cart"
+                                    })
+                            }
                         }
                     }
                 ) {
-                    FloatingActionButton(
-                        onClick = {
-                            navController.navigate(Screen.Cart.route)
-                        },
-                        shape = CircleShape,
-                        containerColor = SoftPink,
-                        modifier = Modifier.size(64.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_cart),
-                            contentDescription = "Cart",
-                            tint = Color.Black,
-                            modifier = Modifier.size(32.dp)
-                        )
+                    val bgDotLottieController = remember { DotLottieController() }
+                    val cartDotLottieController = remember { DotLottieController() }
+
+                    if (cartItemCount > 0) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .size(72.dp),
+                        ) {
+                            DotLottieAnimation(
+                                source = DotLottieSource.Asset("circle_pulse.lottie"),
+                                autoplay = true,
+                                loop = false,
+                                controller = bgDotLottieController,
+                                useFrameInterpolation = false,
+                                playMode = Mode.FORWARD,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .scale(2f)
+                                    .zIndex(0f)
+                            )
+
+                            FloatingActionButton(
+                                onClick = {
+                                    navController.navigate(Screen.Cart.route)
+                                },
+                                shape = CircleShape,
+                                containerColor = SoftPink,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .zIndex(1f)
+                            ) {
+                                DotLottieAnimation(
+                                    source = DotLottieSource.Asset("cart.lottie"),
+                                    autoplay = true,
+                                    loop = true,
+                                    controller = cartDotLottieController,
+                                    useFrameInterpolation = false,
+                                    playMode = Mode.FORWARD,
+                                    modifier = Modifier.size(48.dp)
+                                )
+                            }
+                        }
                     }
                 }
             }

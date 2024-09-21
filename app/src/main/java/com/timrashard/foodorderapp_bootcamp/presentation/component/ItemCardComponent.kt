@@ -59,7 +59,7 @@ fun ItemCardComponent(
             defaultElevation = 4.dp
         ),
         modifier = Modifier
-            .size(width = 175.dp, height = 200.dp)
+            .size(width = 175.dp, height = 225.dp)
             .clickable {
                 onItemClick()
             }

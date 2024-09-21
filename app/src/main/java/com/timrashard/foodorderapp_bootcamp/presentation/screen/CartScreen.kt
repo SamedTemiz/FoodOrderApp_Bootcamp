@@ -122,6 +122,7 @@ fun CartScreen(
                 actions = {
                     IconButton(onClick = {
                         viewModel.clearCart()
+                        navController.popBackStack()
                     }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_more),

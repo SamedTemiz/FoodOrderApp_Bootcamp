@@ -23,15 +23,19 @@ class SharedViewModel @Inject constructor(
     private val _totalPrice = MutableStateFlow(0)
     val totalPrice: StateFlow<Int> = _totalPrice
 
+    private val _itemsCount = MutableStateFlow(0)
+    val itemsCount: StateFlow<Int> = _itemsCount
+
     init {
         fetchCartFoods()
     }
 
-    fun fetchCartFoods() {
+    private fun fetchCartFoods() {
         viewModelScope.launch {
             foodRepository.getAllCartFoods().collectLatest { list ->
                 Log.d("SharedViewModel", "Fetched cart foods: $list")
                 _cartFoods.value = list
+                _itemsCount.value = list.size
             }
         }
     }
@@ -79,6 +83,7 @@ class SharedViewModel @Inject constructor(
                 foodRepository.deleteFoodFromCart(it.sepet_yemek_id)
                 Log.d("SharedViewModel", "Cart is cleared")
                 _cartFoods.value = emptyList()
+                _itemsCount.value = 0
             }
         }
     }

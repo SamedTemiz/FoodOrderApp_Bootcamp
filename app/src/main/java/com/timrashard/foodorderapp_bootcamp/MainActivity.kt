@@ -54,7 +54,10 @@ fun FoodOrderApp() {
                     startDestination = Screen.Dashboard.route,
                 ) {
                     composable(route = Screen.Dashboard.route) {
-                        DashboardScreen(navController = navController)
+                        DashboardScreen(
+                            navController = navController,
+                            sharedViewModel = sharedViewModel
+                        )
                     }
                 }
 
