@@ -1,6 +1,7 @@
 package com.timrashard.foodorderapp_bootcamp.presentation.screen
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,6 +44,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -85,7 +91,7 @@ fun DashboardScreen(
             topBar = {
                 TopAppBarComponent(
                     scope = scope,
-                    drawerState = drawerState
+                    drawerState = drawerState,
                 )
             },
             bottomBar = {
@@ -186,10 +192,31 @@ fun DashboardScreen(
 @Composable
 fun TopAppBarComponent(
     scope: CoroutineScope,
-    drawerState: DrawerState
+    drawerState: DrawerState,
 ) {
     TopAppBar(
-        title = { },
+        title = {
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(
+                        style = SpanStyle(
+                            fontWeight = FontWeight.Light,
+                        )
+                    ) {
+                        append("Zest")
+                    }
+                    withStyle(
+                        style = SpanStyle(
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                    ) {
+                        append("Up")
+                    }
+                },
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
         navigationIcon = {
             ElevatedCard(
                 shape = CircleShape,

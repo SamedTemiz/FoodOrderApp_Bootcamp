@@ -139,12 +139,12 @@ fun HomeScreen(
                     state = listState,
                     modifier = Modifier
                         .fillMaxSize()
-                        .fadingEdge(
-                            brush = Brush.verticalGradient(
-                                0.95f to SoftGray,
-                                1f to Color.Transparent
-                            )
-                        )
+//                        .fadingEdge(
+//                            brush = Brush.verticalGradient(
+//                                0.95f to SoftGray,
+//                                1f to Color.Transparent
+//                            )
+//                        )
                 ) {
                     if (searchText.value.isEmpty()) {
                         items(itemSubList) { sublist ->
