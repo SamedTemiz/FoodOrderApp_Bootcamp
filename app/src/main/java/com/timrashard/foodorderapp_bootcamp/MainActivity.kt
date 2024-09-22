@@ -70,7 +70,7 @@ fun FoodOrderApp() {
                 // Welcome
                 navigation(
                     route = Screen.Welcome.route,
-                    startDestination = Screen.Welcome.Splash.route,
+                    startDestination = Screen.Welcome.Login.route,
                 ) {
                     composable(route = Screen.Welcome.Splash.route) {
                         SplashScreen(
