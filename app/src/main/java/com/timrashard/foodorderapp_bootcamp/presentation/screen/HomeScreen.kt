@@ -41,6 +41,7 @@ import com.lottiefiles.dotlottie.core.util.DotLottieSource
 import com.timrashard.foodorderapp_bootcamp.domain.model.ChipItem
 import com.timrashard.foodorderapp_bootcamp.presentation.component.HorizontalChipMenuComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.component.ItemCardComponent
+import com.timrashard.foodorderapp_bootcamp.presentation.component.LoadingComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.component.SearchBarComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.component.error.SearchErrorComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.component.fadingEdge
@@ -56,7 +57,7 @@ fun HomeScreen(
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
     val itemListState by homeViewModel.itemListState.collectAsState()
-    val itemSubList by homeViewModel.itemSubLists.collectAsState()
+    val itemSubList = homeViewModel.itemSubLists
 
     val searchText = remember { mutableStateOf("") }
     val chipList = remember { mutableStateOf(listOf<ChipItem>()) }
@@ -64,6 +65,7 @@ fun HomeScreen(
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
+        homeViewModel.getAllFoods()
         chipList.value = homeViewModel.getChipList()
     }
 
@@ -115,7 +117,6 @@ fun HomeScreen(
         HorizontalChipMenuComponent(
             chipList = chipList.value,
             onSelected = { index ->
-//                homeViewModel.filterWithChip(index)
                 scope.launch {
                     listState.animateScrollToItem(index = index)
                 }
@@ -124,12 +125,7 @@ fun HomeScreen(
 
         when (itemListState) {
             is Resource.Loading -> {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    CircularProgressIndicator()
-                }
+                LoadingComponent(modifier = Modifier.padding(20.dp))
             }
 
             is Resource.Success -> {
@@ -137,14 +133,7 @@ fun HomeScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     contentPadding = PaddingValues(bottom = 125.dp),
                     state = listState,
-                    modifier = Modifier
-                        .fillMaxSize()
-//                        .fadingEdge(
-//                            brush = Brush.verticalGradient(
-//                                0.95f to SoftGray,
-//                                1f to Color.Transparent
-//                            )
-//                        )
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     if (searchText.value.isEmpty()) {
                         items(itemSubList) { sublist ->
@@ -161,7 +150,7 @@ fun HomeScreen(
                                 contentPadding = PaddingValues(start = 20.dp, end = 20.dp),
                                 horizontalArrangement = Arrangement.spacedBy(16.dp)
                             ) {
-                                items(sublist.items) { food ->
+                                items(sublist.items, key = { it.yemek_id }) { food -> // Unique key kullanımı
                                     ItemCardComponent(
                                         food = food,
                                         onFavoriteClick = {},
@@ -205,7 +194,9 @@ fun HomeScreen(
 
                                 }
                             } else {
-                                SearchErrorComponent(modifier = Modifier.fillMaxSize().padding(16.dp))
+                                SearchErrorComponent(modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(16.dp))
                             }
                         }
                     }

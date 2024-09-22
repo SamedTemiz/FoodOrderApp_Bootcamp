@@ -9,9 +9,13 @@ import com.timrashard.foodorderapp_bootcamp.data.repository.FoodRepository
 import com.timrashard.foodorderapp_bootcamp.domain.model.ChipItem
 import com.timrashard.foodorderapp_bootcamp.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,39 +30,45 @@ class HomeViewModel @Inject constructor(
     private val _itemListState = MutableStateFlow<Resource<YemeklerResponse>>(Resource.Loading())
     val itemListState: StateFlow<Resource<YemeklerResponse>> = _itemListState
 
-    private val _itemSubLists = MutableStateFlow<List<ItemSubList>>(emptyList())
-    val itemSubLists: StateFlow<List<ItemSubList>> = _itemSubLists
+    private var _itemSubLists: List<ItemSubList> = emptyList()
+    val itemSubLists: List<ItemSubList> get() = _itemSubLists
 
     var allItems = listOf<Yemekler>()
     var foods = listOf<Yemekler>()
     var drinks = listOf<Yemekler>()
     var desserts = listOf<Yemekler>()
 
-    init {
-        getAllFoods()
-    }
+//    init {
+//        getAllFoods()
+//    }
 
-    private fun getAllFoods() {
+    fun getAllFoods() {
         viewModelScope.launch {
             foodRepository.getAllFoods().collect { result ->
-                _itemListState.value = result
-
                 if (result is Resource.Success) {
-                    allItems = result.data?.yemekler ?: emptyList()
-                    foods = allItems.filter { item -> foodWords.any { it.lowercase() == item.yemek_adi.lowercase() } }
-                    drinks = allItems.filter { item -> drinkWords.any { it.lowercase() == item.yemek_adi.lowercase() } }
-                    desserts = allItems.filter { item -> dessertWords.any { it.lowercase() == item.yemek_adi.lowercase() } }
-
-                    _itemSubLists.value = listOf(
-                        ItemSubList("All", allItems),
-                        ItemSubList("Foods", foods),
-                        ItemSubList("Drinks", drinks),
-                        ItemSubList("Desserts", desserts)
-                    )
+                    processFoodItems(result.data?.yemekler ?: emptyList())
+                }else{
+                    _itemListState.value = result
                 }
             }
         }
     }
+
+    private suspend fun processFoodItems(items: List<Yemekler>) = withContext(Dispatchers.IO) {
+        foods = items.filter { item -> foodWords.any { it.lowercase() == item.yemek_adi.lowercase() } }
+        drinks = items.filter { item -> drinkWords.any { it.lowercase() == item.yemek_adi.lowercase() } }
+        desserts = items.filter { item -> dessertWords.any { it.lowercase() == item.yemek_adi.lowercase() } }
+
+        _itemSubLists = listOf(
+            ItemSubList("All", items),
+            ItemSubList("Foods", foods),
+            ItemSubList("Drinks", drinks),
+            ItemSubList("Desserts", desserts)
+        )
+
+        _itemListState.value = Resource.Success(YemeklerResponse(items, 1))
+    }
+
 
     fun searchWithQuery(query: String) : List<Yemekler> {
         val filteredItems = allItems.filter { item ->
