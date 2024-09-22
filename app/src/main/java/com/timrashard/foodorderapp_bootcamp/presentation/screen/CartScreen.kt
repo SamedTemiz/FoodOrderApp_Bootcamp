@@ -34,10 +34,13 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -45,6 +48,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -120,15 +124,10 @@ fun CartScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = {
-                        viewModel.clearCart()
-                        navController.popBackStack()
-                    }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_more),
-                            contentDescription = ""
-                        )
-                    }
+                    DropdownMenuComponent(
+                        navController = navController,
+                        viewModel = viewModel
+                    )
                 },
                 windowInsets = WindowInsets(
                     left = 16.dp,
@@ -509,5 +508,88 @@ fun CartItem(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun DropdownMenuComponent(
+    navController: NavController,
+    viewModel: SharedViewModel
+){
+    var expanded by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
+
+    IconButton(onClick = {
+        expanded = !expanded
+    }) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_more),
+            contentDescription = "More Options"
+        )
+    }
+
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = { expanded = false } // Dışına tıklanınca kapansın
+    ) {
+        DropdownMenuItem(
+            onClick = {
+                expanded = false
+                showDialog = true
+            },
+            text = {
+                Text("Clear Cart")
+            },
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_trashcan),
+                    contentDescription = "Delete"
+                )
+            },
+        )
+
+        DropdownMenuItem(
+            onClick = {
+                expanded = false
+            }, text = {
+                Text("Enter discount code")
+            },
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_discount),
+                    contentDescription = "Discount"
+                )
+            }
+        )
+    }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showDialog = false
+            },
+            title = {
+                Text(text = "Clear Cart")
+            },
+            text = {
+                Text("Are you sure you want to clear the cart?")
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.clearCart()
+                    navController.popBackStack()
+                    showDialog = false
+                }) {
+                    Text("Yes")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showDialog = false
+                }) {
+                    Text("No")
+                }
+            }
+        )
     }
 }
