@@ -34,30 +34,39 @@ class HomeViewModel @Inject constructor(
     val itemSubLists: List<ItemSubList> get() = _itemSubLists
 
     var allItems = listOf<Yemekler>()
-    var foods = listOf<Yemekler>()
-    var drinks = listOf<Yemekler>()
-    var desserts = listOf<Yemekler>()
 
-//    init {
-//        getAllFoods()
-//    }
+    init {
+        getAllFoods()
+    }
 
-    fun getAllFoods() {
+    private fun getAllFoods() {
         viewModelScope.launch {
             foodRepository.getAllFoods().collect { result ->
                 if (result is Resource.Success) {
                     processFoodItems(result.data?.yemekler ?: emptyList())
-                }else{
-                    _itemListState.value = result
                 }
+
+                _itemListState.value = result
             }
         }
     }
 
     private suspend fun processFoodItems(items: List<Yemekler>) = withContext(Dispatchers.IO) {
-        foods = items.filter { item -> foodWords.any { it.lowercase() == item.yemek_adi.lowercase() } }
-        drinks = items.filter { item -> drinkWords.any { it.lowercase() == item.yemek_adi.lowercase() } }
-        desserts = items.filter { item -> dessertWords.any { it.lowercase() == item.yemek_adi.lowercase() } }
+        allItems = items
+
+        val foods = mutableListOf<Yemekler>()
+        val drinks = mutableListOf<Yemekler>()
+        val desserts = mutableListOf<Yemekler>()
+
+        items.forEach { item ->
+            if(foodWords.any { it.lowercase() == item.yemek_adi.lowercase() }){
+                foods.add(item)
+            }else if(drinkWords.any { it.lowercase() == item.yemek_adi.lowercase() }){
+                drinks.add(item)
+            }else if(dessertWords.any { it.lowercase() == item.yemek_adi.lowercase() }){
+                desserts.add(item)
+            }
+        }
 
         _itemSubLists = listOf(
             ItemSubList("All", items),
@@ -65,8 +74,6 @@ class HomeViewModel @Inject constructor(
             ItemSubList("Drinks", drinks),
             ItemSubList("Desserts", desserts)
         )
-
-        _itemListState.value = Resource.Success(YemeklerResponse(items, 1))
     }
 
 

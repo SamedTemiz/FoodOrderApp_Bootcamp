@@ -60,14 +60,9 @@ fun HomeScreen(
     val itemSubList = homeViewModel.itemSubLists
 
     val searchText = remember { mutableStateOf("") }
-    val chipList = remember { mutableStateOf(listOf<ChipItem>()) }
+    val chipList = homeViewModel.getChipList()
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
-
-    LaunchedEffect(Unit) {
-        homeViewModel.getAllFoods()
-        chipList.value = homeViewModel.getChipList()
-    }
 
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -115,7 +110,7 @@ fun HomeScreen(
         )
 
         HorizontalChipMenuComponent(
-            chipList = chipList.value,
+            chipList = chipList,
             onSelected = { index ->
                 scope.launch {
                     listState.animateScrollToItem(index = index)
@@ -125,7 +120,12 @@ fun HomeScreen(
 
         when (itemListState) {
             is Resource.Loading -> {
-                LoadingComponent(modifier = Modifier.padding(20.dp))
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxSize()
+                ){
+                    CircularProgressIndicator()
+                }
             }
 
             is Resource.Success -> {
@@ -140,7 +140,6 @@ fun HomeScreen(
                             Text(
                                 text = sublist.title,
                                 fontSize = 20.sp,
-                                fontWeight = FontWeight.SemiBold,
                                 modifier = Modifier.padding(start = 20.dp)
                             )
 
@@ -150,7 +149,7 @@ fun HomeScreen(
                                 contentPadding = PaddingValues(start = 20.dp, end = 20.dp),
                                 horizontalArrangement = Arrangement.spacedBy(16.dp)
                             ) {
-                                items(sublist.items, key = { it.yemek_id }) { food -> // Unique key kullanımı
+                                items(sublist.items, key = { it.yemek_id }) { food ->
                                     ItemCardComponent(
                                         food = food,
                                         onFavoriteClick = {},
@@ -194,9 +193,11 @@ fun HomeScreen(
 
                                 }
                             } else {
-                                SearchErrorComponent(modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(16.dp))
+                                SearchErrorComponent(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(16.dp)
+                                )
                             }
                         }
                     }
