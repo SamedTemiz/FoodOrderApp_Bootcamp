@@ -22,15 +22,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.dotlottie.dlplayer.Mode
 import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
 import com.lottiefiles.dotlottie.core.util.DotLottieSource
 import com.timrashard.foodorderapp_bootcamp.presentation.component.MainButtonComponent
+import com.timrashard.foodorderapp_bootcamp.presentation.navigation.Screen
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftOrange
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SuccessScreen() {
+fun SuccessScreen(
+    navController: NavController
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -82,7 +86,7 @@ fun SuccessScreen() {
             }
 
             Column(
-                verticalArrangement = Arrangement.SpaceBetween,
+                verticalArrangement = Arrangement.SpaceEvenly,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .weight(1f)
@@ -99,21 +103,29 @@ fun SuccessScreen() {
                 )
 
                 MainButtonComponent(
-                    text = "Track order",
+                    text = "Back to shopping",
                     modifier = Modifier.padding(horizontal = 20.dp)
                 ){
-
+                    navController.navigate(Screen.Main.route){
+                        popUpTo(Screen.Success.route){
+                            inclusive = true
+                        }
+                    }
                 }
 
-                Text(
-                    text = "Back to shopping",
-                    textDecoration = TextDecoration.Underline,
-                    color = SoftOrange,
-                    modifier = Modifier
-                        .clickable {
-
-                        }
-                )
+//                Text(
+//                    text = "Back to shopping",
+//                    textDecoration = TextDecoration.Underline,
+//                    color = SoftOrange,
+//                    modifier = Modifier
+//                        .clickable {
+//                            navController.navigate(Screen.Home.route){
+//                                popUpTo(Screen.Success.route){
+//                                    inclusive = true
+//                                }
+//                            }
+//                        }
+//                )
             }
         }
     }

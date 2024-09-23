@@ -66,6 +66,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -77,6 +78,8 @@ import com.timrashard.foodorderapp_bootcamp.R
 import com.timrashard.foodorderapp_bootcamp.common.Constants
 import com.timrashard.foodorderapp_bootcamp.data.model.SepetResponse
 import com.timrashard.foodorderapp_bootcamp.data.model.SepetYemekler
+import com.timrashard.foodorderapp_bootcamp.data.model.toSepetYemekModel
+import com.timrashard.foodorderapp_bootcamp.domain.model.Order
 import com.timrashard.foodorderapp_bootcamp.presentation.component.DashedDividerComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.component.MainButtonComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.component.error.SearchErrorComponent
@@ -88,6 +91,7 @@ import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftGray
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftOrange
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftPink
 import com.timrashard.foodorderapp_bootcamp.utils.Resource
+import com.timrashard.foodorderapp_bootcamp.utils.Utils
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -100,10 +104,6 @@ fun CartScreen(
 
     LaunchedEffect(cartFoodList) {
         viewModel.calculateTotalPrice()
-
-        if(cartFoodList.isEmpty()){
-            navController.popBackStack()
-        }
     }
 
     Scaffold(
@@ -119,7 +119,7 @@ fun CartScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = {
-                            navController.popBackStack()
+                        navController.popBackStack()
                     }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
@@ -181,7 +181,7 @@ fun CartScreen(
                         }
                     }
                 }
-            }else{
+            } else {
                 SearchErrorComponent(
                     modifier = Modifier
                         .fillMaxSize()
@@ -191,6 +191,7 @@ fun CartScreen(
 
             CartDetails(
                 viewModel = viewModel,
+                navController = navController,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
@@ -203,6 +204,7 @@ fun CartScreen(
 @Composable
 fun CartDetails(
     viewModel: SharedViewModel,
+    navController: NavController,
     modifier: Modifier
 ) {
     val totalPrice by viewModel.totalPrice.collectAsState()
@@ -211,6 +213,8 @@ fun CartDetails(
     val rotationState by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f
     )
+
+    val context = LocalContext.current
 
     Column(
         verticalArrangement = Arrangement.Bottom,
@@ -372,7 +376,14 @@ fun CartDetails(
                 text = "Pay now",
                 modifier = Modifier.weight(1f)
             ) {
-                // success ekranı
+                viewModel.createOrder()
+                viewModel.clearCart()
+                Utils.showToast(context, "Order created")
+                navController.navigate(Screen.Success.route) {
+                    popUpTo(Screen.Cart.route) {
+                        inclusive = true
+                    }
+                }
             }
         }
     }
@@ -411,9 +422,9 @@ fun CartItem(
                     Icon(Icons.Default.Clear, contentDescription = "Delete")
                 }
             }
-            
+
             Spacer(modifier = Modifier.width(8.dp))
-            
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -531,7 +542,7 @@ fun CartItem(
 fun DropdownMenuComponent(
     navController: NavController,
     viewModel: SharedViewModel
-){
+) {
     var expanded by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
 
@@ -593,7 +604,11 @@ fun DropdownMenuComponent(
             confirmButton = {
                 TextButton(onClick = {
                     viewModel.clearCart()
-                    navController.popBackStack()
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Cart.route) {
+                            inclusive = true
+                        }
+                    }
                     showDialog = false
                 }) {
                     Text("Yes")

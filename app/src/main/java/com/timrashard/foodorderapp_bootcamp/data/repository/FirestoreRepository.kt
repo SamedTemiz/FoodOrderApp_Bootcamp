@@ -2,6 +2,7 @@ package com.timrashard.foodorderapp_bootcamp.data.repository
 
 import com.timrashard.foodorderapp_bootcamp.data.datasource.FirestoreDataSource
 import com.timrashard.foodorderapp_bootcamp.data.model.Yemekler
+import com.timrashard.foodorderapp_bootcamp.domain.model.Order
 import com.timrashard.foodorderapp_bootcamp.utils.Resource
 import kotlinx.coroutines.flow.Flow
 
@@ -22,27 +23,16 @@ class FirestoreRepository(val firestoreDataSource: FirestoreDataSource) {
     }
 
     // ORDERS
-    /*
-    fun addOrder(
-        userId: String,
-        yemek: Yemekler,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit
-    ) = firestoreDataSource.addOrder(
-        userId, yemek, onSuccess, onFailure
-    )
 
-    fun getOrders(
-        userId: String,
-        onSuccess: (List<Yemekler>) -> Unit,
-        onFailure: (Exception) -> Unit
-    ) = firestoreDataSource.getOrders(userId, onSuccess, onFailure)
+    suspend fun addOrder(userId: String, order: Order): Resource<Unit> {
+        return firestoreDataSource.addOrder(userId, order)
+    }
 
-    fun deleteFromOrders(
-        userId: String,
-        yemekId: Int,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit
-    ) = firestoreDataSource.deleteFromOrders(userId, yemekId, onSuccess, onFailure)
-     */
+    fun getOrders(userId: String): Flow<Resource<List<Order>>> {
+        return firestoreDataSource.getOrders(userId)
+    }
+
+    suspend fun deleteOrder(userId: String, orderId: Int): Resource<Unit> {
+        return firestoreDataSource.deleteOrder(userId, orderId)
+    }
 }
