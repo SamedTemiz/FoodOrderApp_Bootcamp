@@ -1,6 +1,6 @@
 package com.timrashard.foodorderapp_bootcamp.presentation.screen.auth
 
-import androidx.compose.animation.Crossfade
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,66 +13,92 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.timrashard.foodorderapp_bootcamp.R
 import com.timrashard.foodorderapp_bootcamp.presentation.component.AuthTextFieldComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.component.MainButtonComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.navigation.Screen
-import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftGray
+import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.AuthState
+import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.AuthViewModel
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftLightGray
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftOrange
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftPink
-import com.timrashard.foodorderapp_bootcamp.utils.Auth
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.delay
 
 @Composable
-fun LoginScreen(navController: NavController) {
-    var selectedTabIndex by remember { mutableStateOf(0) }
-//    var authState by remember { mutableStateOf(Auth.LOGIN) }
+fun AuthScreen(
+    navController: NavController,
+    authViewModel: AuthViewModel
+) {
+    val context = LocalContext.current
 
-    var email by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
-    var rememberMe by remember { mutableStateOf(false) }
+    val authState = authViewModel.authState.collectAsState()
+
+    var selectedTabIndex by remember { mutableStateOf(0) }
+
+    val email by authViewModel.email.collectAsState()
+    val password by authViewModel.password.collectAsState()
+    val rememberMe by authViewModel.rememberMe.collectAsState()
+
+    LaunchedEffect(authState.value) {
+        when (authState.value) {
+            is AuthState.LoggedIn -> {
+                Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
+                navController.navigate(Screen.Main.route) {
+                    popUpTo(Screen.Welcome.Login.route) { inclusive = true }
+                }
+            }
+
+            is AuthState.Error -> Toast.makeText(
+                context,
+                (authState.value as AuthState.Error).message,
+                Toast.LENGTH_SHORT
+            ).show()
+
+            is AuthState.Loading -> {}
+            else -> Unit
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        authViewModel.checkRememberMe()
+    }
+
+    if (authState.value is AuthState.Loading) {
+        CheckingComponent()
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -131,7 +157,7 @@ fun LoginScreen(navController: NavController) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             AuthTextFieldComponent(
                 value = email,
-                onValueChange = { email = it },
+                onValueChange = { authViewModel.updateEmail(it) },
                 isPassword = false,
                 placeHolder = "Enter your email",
                 modifier = Modifier
@@ -141,7 +167,7 @@ fun LoginScreen(navController: NavController) {
 
             AuthTextFieldComponent(
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = { authViewModel.updatePassword(it) },
                 isPassword = true,
                 placeHolder = "Enter your password",
                 modifier = Modifier
@@ -161,7 +187,7 @@ fun LoginScreen(navController: NavController) {
             ) {
                 Checkbox(
                     checked = rememberMe,
-                    onCheckedChange = { rememberMe = it },
+                    onCheckedChange = { authViewModel.updateRememberMe(it) },
                     colors = CheckboxDefaults.colors(
                         checkedColor = SoftOrange,
                     )
@@ -184,8 +210,23 @@ fun LoginScreen(navController: NavController) {
 
         MainButtonComponent(
             text = if (selectedTabIndex == 0) "Login" else "Register",
-            onClick = {},
+            onClick = {
+                if (selectedTabIndex == 0) {
+                    authViewModel.loginUser(email, password)
+                } else {
+                    authViewModel.registerUser(email, password)
+                }
+            },
             modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(64.dp))
+
+        Text(
+            "v1.0.0",
+            fontSize = 12.sp,
+            color = Color.Gray,
+            textDecoration = TextDecoration.Underline
         )
     }
 }
@@ -248,6 +289,31 @@ fun CustomTabRow(
                         )
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun CheckingComponent() {
+    Dialog(onDismissRequest = {}) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.background(Color.White, shape = RoundedCornerShape(8.dp))
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(36.dp)
+            ) {
+                CircularProgressIndicator(color = SoftOrange)
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "Checking...",
+                    modifier = Modifier.padding(top = 16.dp),
+                    color = Color.Black
+                )
             }
         }
     }

@@ -21,22 +21,19 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.gson.Gson
 import com.timrashard.foodorderapp_bootcamp.data.model.Yemekler
-import com.timrashard.foodorderapp_bootcamp.presentation.component.LoadingComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.navigation.Screen
 import com.timrashard.foodorderapp_bootcamp.presentation.screen.CartScreen
-import com.timrashard.foodorderapp_bootcamp.presentation.screen.DashboardScreen
+import com.timrashard.foodorderapp_bootcamp.presentation.screen.main.DashboardScreen
 import com.timrashard.foodorderapp_bootcamp.presentation.screen.DetailsScreen
 import com.timrashard.foodorderapp_bootcamp.presentation.screen.onboarding.OnboardingScreen
 import com.timrashard.foodorderapp_bootcamp.presentation.screen.SuccessScreen
-import com.timrashard.foodorderapp_bootcamp.presentation.screen.auth.LoginScreen
-import com.timrashard.foodorderapp_bootcamp.presentation.screen.auth.RegisterScreen
+import com.timrashard.foodorderapp_bootcamp.presentation.screen.auth.AuthScreen
 import com.timrashard.foodorderapp_bootcamp.presentation.screen.onboarding.SplashScreen
+import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.AuthViewModel
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.OnBoardViewModel
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.SharedViewModel
 import com.timrashard.foodorderapp_bootcamp.ui.theme.FoodOrderApp_BootcampTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -56,6 +53,7 @@ fun FoodOrderApp() {
     val scope = rememberCoroutineScope()
 
     val onBoardViewModel: OnBoardViewModel = hiltViewModel()
+    val authViewModel: AuthViewModel = hiltViewModel()
     val sharedViewModel: SharedViewModel = hiltViewModel()
 
     val startDestination by remember { onBoardViewModel.startDestination }
@@ -70,7 +68,7 @@ fun FoodOrderApp() {
                 // Welcome
                 navigation(
                     route = Screen.Welcome.route,
-                    startDestination = Screen.Welcome.Login.route,
+                    startDestination = Screen.Welcome.Splash.route,
                 ) {
                     composable(route = Screen.Welcome.Splash.route) {
                         SplashScreen(
@@ -84,11 +82,7 @@ fun FoodOrderApp() {
                     }
 
                     composable(route = Screen.Welcome.Login.route) {
-                        LoginScreen(navController = navController)
-                    }
-
-                    composable(route = Screen.Welcome.Register.route) {
-                        RegisterScreen(navController = navController)
+                        AuthScreen(navController = navController, authViewModel = authViewModel)
                     }
                 }
 
@@ -100,7 +94,8 @@ fun FoodOrderApp() {
                     composable(route = Screen.Dashboard.route) {
                         DashboardScreen(
                             navController = navController,
-                            sharedViewModel = sharedViewModel
+                            authViewModel = authViewModel,
+                            sharedViewModel = sharedViewModel,
                         )
                     }
                 }

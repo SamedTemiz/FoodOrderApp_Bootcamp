@@ -1,10 +1,13 @@
 package com.timrashard.foodorderapp_bootcamp.presentation.component
 
+import android.widget.Space
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -20,7 +23,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -51,6 +53,8 @@ fun AuthTextFieldComponent(
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold
         ),
+        maxLines = 1,
+        singleLine = true,
         placeholder = {
             placeHolder?.let {
                 Text(text = it)
@@ -60,12 +64,15 @@ fun AuthTextFieldComponent(
             imeAction = if(isPassword) ImeAction.Done else ImeAction.Next
         ),
         trailingIcon = {
-            Row {
+            Row(
+                modifier = Modifier.padding(end = 8.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
                 if (isPassword) {
                     IconButton(
                         onClick = { passwordVisibility = !passwordVisibility },
                         colors = IconButtonDefaults.iconButtonColors(
-                            containerColor = if(passwordVisibility) Color.White else Color.Transparent
+                            containerColor = if (passwordVisibility) Color.White else Color.Transparent
                         ),
                         modifier = Modifier.size(28.dp)
                     ) {
@@ -76,8 +83,10 @@ fun AuthTextFieldComponent(
                         )
                     }
                 }
+
                 if (value.isNotEmpty()) {
-                    // Clear icon
+                    Spacer(modifier = Modifier.width(8.dp))
+                    
                     IconButton(
                         onClick = { onValueChange("") },
                         colors = IconButtonDefaults.iconButtonColors(
