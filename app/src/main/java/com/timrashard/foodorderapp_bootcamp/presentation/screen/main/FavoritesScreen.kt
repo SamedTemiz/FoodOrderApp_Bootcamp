@@ -99,6 +99,7 @@ fun FavoritesScreen(
                     if (favoriteList.isNullOrEmpty()) {
                         item {
                             SearchErrorComponent(
+                                text = "Your favorites is empty",
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(16.dp)
@@ -128,16 +129,7 @@ fun FavoritesScreen(
                                     )
                                 }
                             }
-                        } else {
-                            item {
-                                SearchErrorComponent(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(16.dp)
-                                )
-                            }
                         }
-
                     }
                 }
 

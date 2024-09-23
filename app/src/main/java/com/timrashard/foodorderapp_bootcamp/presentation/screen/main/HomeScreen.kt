@@ -200,6 +200,7 @@ fun HomeScreen(
                                 }
                             } else {
                                 SearchErrorComponent(
+                                    text = "No result found",
                                     modifier = Modifier
                                         .fillMaxSize()
                                         .padding(16.dp)

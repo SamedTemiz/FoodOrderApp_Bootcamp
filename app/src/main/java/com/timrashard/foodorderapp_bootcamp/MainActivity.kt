@@ -97,6 +97,7 @@ fun FoodOrderApp() {
                     }
                 }
 
+                // Details Screen
                 composable(route = Screen.Details.route + "/{yemekler}",
                     arguments = listOf(
                         navArgument("yemekler") { type = NavType.StringType }
@@ -112,6 +113,7 @@ fun FoodOrderApp() {
                     )
                 }
 
+                // Cart Screen
                 composable(route = Screen.Cart.route) {
                     CartScreen(
                         navController = navController,
@@ -119,6 +121,7 @@ fun FoodOrderApp() {
                     )
                 }
 
+                // Success Screen
                 composable(route = Screen.Success.route) {
                     SuccessScreen(navController = navController)
                 }
