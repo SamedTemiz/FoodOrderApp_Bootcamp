@@ -183,6 +183,7 @@ fun CartScreen(
                 }
             } else {
                 SearchErrorComponent(
+                    text = "Your cart is empty",
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(16.dp)

@@ -151,8 +151,8 @@ fun DetailsScreen(
                         )
 
                         ItemInfoCardComponent(
-                            icon = R.drawable.ic_star,
-                            text = "4.8"
+                            icon = R.drawable.ic_discount,
+                            text = "%10"
                         )
                     }
 
@@ -186,7 +186,7 @@ fun DetailsScreen(
                             .weight(1f)
                             .padding(bottom = 8.dp)
                             .verticalScroll(rememberScrollState()),
-                        text = "Ayran geleneksel Türk içeceğidir. Yoğurt, su ve tuz karışımı ile elde edilir. Yapımı oldukça basit olan ayran içeceğini, Türkiye'de sıkça tüketilmektedir. "
+                        text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc laoreet erat mauris, ac venenatis tortor fringilla eget. Morbi a nulla laoreet, cursus orci et, vehicula."
                     )
                 }
 

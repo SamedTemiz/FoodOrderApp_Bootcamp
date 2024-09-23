@@ -19,6 +19,7 @@ import com.timrashard.foodorderapp_bootcamp.R
 
 @Composable
 fun SearchErrorComponent(
+    text: String?,
     modifier: Modifier
 ) {
     Box(
@@ -37,7 +38,7 @@ fun SearchErrorComponent(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text("No products found")
+            Text(text ?: "No products found")
         }
     }
 }

@@ -104,6 +104,7 @@ fun OrdersScreen(
                     if (ordersList.isNullOrEmpty()) {
                         item {
                             SearchErrorComponent(
+                                text = "Your orders is empty",
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(16.dp)
