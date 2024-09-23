@@ -236,8 +236,12 @@ fun ButtonsSection(
             Button(
                 onClick = {
                     onBoardViewModel.saveOnBoardingState(completed = true)
-                    navController.popBackStack()
-                    navController.navigate(Screen.Dashboard.route)
+
+                    navController.navigate(Screen.Welcome.Login.route) {
+                        popUpTo(Screen.Welcome.OnBoard.route) {
+                            inclusive = true
+                        }
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()

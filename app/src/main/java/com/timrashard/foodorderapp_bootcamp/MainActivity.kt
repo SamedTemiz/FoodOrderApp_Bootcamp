@@ -56,8 +56,8 @@ fun FoodOrderApp() {
     val authViewModel: AuthViewModel = hiltViewModel()
     val sharedViewModel: SharedViewModel = hiltViewModel()
 
-    val startDestination by remember { onBoardViewModel.startDestination }
-    val isLoading by remember { onBoardViewModel.isLoading }
+//    val startDestination by remember { onBoardViewModel.startDestination }
+//    val isLoading by remember { onBoardViewModel.isLoading }
 
     FoodOrderApp_BootcampTheme {
         Surface(

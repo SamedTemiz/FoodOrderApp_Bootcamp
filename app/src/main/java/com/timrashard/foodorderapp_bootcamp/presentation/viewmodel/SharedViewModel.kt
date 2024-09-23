@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SharedViewModel @Inject constructor(
-    private val foodRepository: FoodRepository
+    private val foodRepository: FoodRepository,
 ) : ViewModel() {
 
     private val _cartFoods = MutableStateFlow<List<SepetYemekler>>(emptyList())
@@ -71,7 +71,7 @@ class SharedViewModel @Inject constructor(
 
     fun deleteFoodFromCart(sepetYemekler: SepetYemekler) {
         viewModelScope.launch {
-            val result = foodRepository.deleteFoodFromCart(sepetYemekler.sepet_yemek_id)
+            foodRepository.deleteFoodFromCart(sepetYemekler.sepet_yemek_id)
             Log.d("SharedViewModel", "Deleted ${sepetYemekler.yemek_adi} from cart")
             fetchCartFoods()
         }

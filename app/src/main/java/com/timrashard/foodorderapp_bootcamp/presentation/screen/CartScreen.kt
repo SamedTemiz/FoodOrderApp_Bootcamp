@@ -79,7 +79,9 @@ import com.timrashard.foodorderapp_bootcamp.data.model.SepetResponse
 import com.timrashard.foodorderapp_bootcamp.data.model.SepetYemekler
 import com.timrashard.foodorderapp_bootcamp.presentation.component.DashedDividerComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.component.MainButtonComponent
+import com.timrashard.foodorderapp_bootcamp.presentation.component.error.SearchErrorComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.navigation.Screen
+import com.timrashard.foodorderapp_bootcamp.presentation.screen.main.FavoriteItem
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.SharedViewModel
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SmokeWhite
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftGray
@@ -98,6 +100,10 @@ fun CartScreen(
 
     LaunchedEffect(cartFoodList) {
         viewModel.calculateTotalPrice()
+
+        if(cartFoodList.isEmpty()){
+            navController.popBackStack()
+        }
     }
 
     Scaffold(
@@ -113,9 +119,7 @@ fun CartScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = {
-                        navController.navigate(Screen.Dashboard.route) {
-                            popUpTo(navController.graph.startDestinationId) { inclusive = true }
-                        }
+                            navController.popBackStack()
                     }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
@@ -154,24 +158,35 @@ fun CartScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(cartFoodList) { food ->
-                        CartItem(
-                            food = food,
-                            onDeleteClick = {
-                                viewModel.deleteFoodFromCart(food)
-                            },
-                            onCounterPlusClick = {
-                                val updatedFood = food.copy(yemek_siparis_adet = it)
-                                viewModel.addFoodToCart(updatedFood, isDetails = false)
-                                viewModel.calculateTotalPrice()
-                            },
-                            onCounterMinusClick = {
-                                val updatedFood = food.copy(yemek_siparis_adet = it)
-                                viewModel.addFoodToCart(updatedFood, isDetails = false)
-                                viewModel.calculateTotalPrice()
-                            }
-                        )
+                        var isVisible by remember { mutableStateOf(true) }
+
+                        AnimatedVisibility(visible = isVisible) {
+                            CartItem(
+                                food = food,
+                                onDeleteClick = {
+                                    isVisible = false
+                                    viewModel.deleteFoodFromCart(food)
+                                },
+                                onCounterPlusClick = {
+                                    val updatedFood = food.copy(yemek_siparis_adet = it)
+                                    viewModel.addFoodToCart(updatedFood, isDetails = false)
+                                    viewModel.calculateTotalPrice()
+                                },
+                                onCounterMinusClick = {
+                                    val updatedFood = food.copy(yemek_siparis_adet = it)
+                                    viewModel.addFoodToCart(updatedFood, isDetails = false)
+                                    viewModel.calculateTotalPrice()
+                                }
+                            )
+                        }
                     }
                 }
+            }else{
+                SearchErrorComponent(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                )
             }
 
             CartDetails(
@@ -388,7 +403,7 @@ fun CartItem(
                 .padding(vertical = 8.dp, horizontal = 12.dp)
         ) {
             Box(
-                modifier = Modifier.size(48.dp)
+                modifier = Modifier.size(36.dp)
             ) {
                 IconButton(onClick = {
                     onDeleteClick()
@@ -396,7 +411,9 @@ fun CartItem(
                     Icon(Icons.Default.Clear, contentDescription = "Delete")
                 }
             }
-
+            
+            Spacer(modifier = Modifier.width(8.dp))
+            
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -428,9 +445,8 @@ fun CartItem(
                     modifier = Modifier
                         .fillMaxHeight()
                         .weight(1f)
-                        .padding(start = 8.dp)
                 ) {
-                    Text(text = "Drink", fontSize = 16.sp, color = SoftOrange)
+                    Text(text = "Category", fontSize = 16.sp, color = SoftOrange)
                     Text(text = food.yemek_adi, fontSize = 18.sp, fontWeight = FontWeight.Bold)
 
                     Row(
@@ -451,7 +467,7 @@ fun CartItem(
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier
                                     .alignByBaseline()
-                                    .padding(start = 8.dp)
+                                    .padding(start = 4.dp)
                             )
                         }
 

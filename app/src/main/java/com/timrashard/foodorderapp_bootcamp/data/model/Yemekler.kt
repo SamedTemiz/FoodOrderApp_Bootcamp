@@ -3,12 +3,20 @@ package com.timrashard.foodorderapp_bootcamp.data.model
 import com.timrashard.foodorderapp_bootcamp.common.Constants
 import com.timrashard.foodorderapp_bootcamp.domain.model.YemekModel
 
+//data class Yemekler(
+//    var yemek_id: Int,
+//    var yemek_adi: String,
+//    var yemek_resim_adi: String,
+//    var yemek_fiyat: Int
+//)
+
 data class Yemekler(
-    var yemek_id: Int,
-    var yemek_adi: String,
-    var yemek_resim_adi: String,
-    var yemek_fiyat: Int
+    var yemek_id: Int = 0,
+    var yemek_adi: String = "",
+    var yemek_resim_adi: String = "",
+    var yemek_fiyat: Int = 0
 )
+
 
 fun Yemekler.toSepetYemekler(siparisAdet: Int) : SepetYemekler{
     return SepetYemekler(
