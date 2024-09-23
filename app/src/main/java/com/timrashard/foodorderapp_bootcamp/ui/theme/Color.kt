@@ -13,6 +13,7 @@ val Pink40 = Color(0xFF7D5260)
 // FoodOrderApp Colors
 val BgBlack = Color(0xFF191919)
 val SoftGray = Color(0xFFA6A6A9)
+val SoftLightGray = Color(0xFFE8E8E8)
 val SmokeWhite = Color(0xFFEEEEEE)
 val StarYellow = Color(0xFFffbc0d)
 val SoftOrange = Color(0xFFff8c06)

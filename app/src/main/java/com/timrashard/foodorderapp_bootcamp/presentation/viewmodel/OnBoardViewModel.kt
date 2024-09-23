@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.timrashard.foodorderapp_bootcamp.data.repository.DataStoreRepository
+import com.timrashard.foodorderapp_bootcamp.data.repository.DataStoreRepository.PreferencesKey
 import com.timrashard.foodorderapp_bootcamp.presentation.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -23,20 +24,22 @@ class OnBoardViewModel @Inject constructor(private val repository: DataStoreRepo
 
     init {
         viewModelScope.launch {
-            repository.readOnBoardingState().collect { completed ->
-                if (completed) {
-                    _startDestination.value = Screen.Welcome.Login.route
-                } else {
-                    _startDestination.value = Screen.Welcome.OnBoard.route
+            repository.readBoolean(PreferencesKey.onBoardingKey).collect { value ->
+                value?.let {
+                    if (value) {
+                        _startDestination.value = Screen.Welcome.Login.route
+                    } else {
+                        _startDestination.value = Screen.Welcome.OnBoard.route
+                    }
+                    _isLoading.value = false
                 }
-                _isLoading.value = false
             }
         }
     }
 
     fun saveOnBoardingState(completed: Boolean){
         viewModelScope.launch (Dispatchers.IO){
-            repository.saveOnBoardingState(completed = completed)
+            repository.saveBoolean(key = PreferencesKey.onBoardingKey, value = completed)
         }
     }
 }

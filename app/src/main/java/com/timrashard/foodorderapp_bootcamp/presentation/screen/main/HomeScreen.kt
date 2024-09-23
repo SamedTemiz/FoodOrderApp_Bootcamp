@@ -1,4 +1,4 @@
-package com.timrashard.foodorderapp_bootcamp.presentation.screen
+package com.timrashard.foodorderapp_bootcamp.presentation.screen.main
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,7 +26,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -38,16 +36,12 @@ import com.dotlottie.dlplayer.Mode
 import com.google.gson.Gson
 import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
 import com.lottiefiles.dotlottie.core.util.DotLottieSource
-import com.timrashard.foodorderapp_bootcamp.domain.model.ChipItem
 import com.timrashard.foodorderapp_bootcamp.presentation.component.HorizontalChipMenuComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.component.ItemCardComponent
-import com.timrashard.foodorderapp_bootcamp.presentation.component.LoadingComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.component.SearchBarComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.component.error.SearchErrorComponent
-import com.timrashard.foodorderapp_bootcamp.presentation.component.fadingEdge
 import com.timrashard.foodorderapp_bootcamp.presentation.navigation.Screen
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.HomeViewModel
-import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftGray
 import com.timrashard.foodorderapp_bootcamp.utils.Resource
 import kotlinx.coroutines.launch
 

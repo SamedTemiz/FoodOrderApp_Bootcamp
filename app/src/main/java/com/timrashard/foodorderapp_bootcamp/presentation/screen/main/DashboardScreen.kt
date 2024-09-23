@@ -1,7 +1,6 @@
-package com.timrashard.foodorderapp_bootcamp.presentation.screen
+package com.timrashard.foodorderapp_bootcamp.presentation.screen.main
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,6 +32,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -64,6 +64,8 @@ import com.lottiefiles.dotlottie.core.util.DotLottieSource
 import com.timrashard.foodorderapp_bootcamp.R
 import com.timrashard.foodorderapp_bootcamp.presentation.component.DrawerContent
 import com.timrashard.foodorderapp_bootcamp.presentation.navigation.Screen
+import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.AuthState
+import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.AuthViewModel
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.SharedViewModel
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftGray
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftPink
@@ -73,13 +75,28 @@ import kotlinx.coroutines.launch
 @Composable
 fun DashboardScreen(
     navController: NavController,
-    sharedViewModel: SharedViewModel
+    authViewModel: AuthViewModel,
+    sharedViewModel: SharedViewModel,
 ) {
+    val authState = authViewModel.authState.collectAsState()
+
     val cartItemCount by sharedViewModel.itemsCount.collectAsState()
 
     val dashBoardNavController = rememberNavController()
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
+
+    LaunchedEffect(authState.value) {
+        when (authState.value) {
+            is AuthState.LoggedOut -> {
+                navController.navigate(Screen.Welcome.route) {
+                    popUpTo(Screen.Main.route) { inclusive = true }
+                }
+            }
+
+            else -> Unit
+        }
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -92,6 +109,7 @@ fun DashboardScreen(
                 TopAppBarComponent(
                     scope = scope,
                     drawerState = drawerState,
+                    authViewModel = authViewModel
                 )
             },
             bottomBar = {
@@ -193,6 +211,7 @@ fun DashboardScreen(
 fun TopAppBarComponent(
     scope: CoroutineScope,
     drawerState: DrawerState,
+    authViewModel: AuthViewModel
 ) {
     TopAppBar(
         title = {
@@ -246,6 +265,9 @@ fun TopAppBarComponent(
                 elevation = CardDefaults.cardElevation(
                     defaultElevation = 4.dp
                 ),
+                onClick = {
+                    authViewModel.logoutUser()
+                },
                 modifier = Modifier.size(48.dp)
             ) {
                 Image(

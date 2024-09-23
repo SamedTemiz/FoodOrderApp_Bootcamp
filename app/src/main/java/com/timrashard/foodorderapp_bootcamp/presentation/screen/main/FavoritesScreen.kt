@@ -1,4 +1,4 @@
-package com.timrashard.foodorderapp_bootcamp.presentation.screen
+package com.timrashard.foodorderapp_bootcamp.presentation.screen.main
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

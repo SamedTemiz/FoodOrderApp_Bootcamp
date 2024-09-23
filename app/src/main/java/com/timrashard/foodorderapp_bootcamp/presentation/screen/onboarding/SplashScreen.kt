@@ -32,6 +32,7 @@ import com.dotlottie.dlplayer.Mode
 import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
 import com.lottiefiles.dotlottie.core.util.DotLottieSource
 import com.timrashard.foodorderapp_bootcamp.presentation.component.LoadingComponent
+import com.timrashard.foodorderapp_bootcamp.presentation.navigation.Screen
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.OnBoardViewModel
 import kotlinx.coroutines.delay
 
@@ -52,8 +53,9 @@ fun SplashScreen(
         )
         delay(1000)
 
-        navController.popBackStack()
-        navController.navigate(viewModel.startDestination.value)
+        navController.navigate(viewModel.startDestination.value){
+            popUpTo(Screen.Welcome.Splash.route) { inclusive = true }
+        }
     }
 
     Column(
