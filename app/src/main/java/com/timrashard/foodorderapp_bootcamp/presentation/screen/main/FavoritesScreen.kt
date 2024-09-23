@@ -1,10 +1,6 @@
 package com.timrashard.foodorderapp_bootcamp.presentation.screen.main
 
-import android.content.Context
-import android.view.Gravity
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,14 +13,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -46,28 +40,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
-import com.google.firebase.auth.FirebaseUser
 import com.timrashard.foodorderapp_bootcamp.R
 import com.timrashard.foodorderapp_bootcamp.common.Constants
 import com.timrashard.foodorderapp_bootcamp.data.model.Yemekler
 import com.timrashard.foodorderapp_bootcamp.data.model.toSepetYemekler
-import com.timrashard.foodorderapp_bootcamp.presentation.component.MainButtonComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.component.error.SearchErrorComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.FavoritesViewModel
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.SharedViewModel
 import com.timrashard.foodorderapp_bootcamp.ui.theme.BgBlack
-import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftGray
-import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftLightGray
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftPink
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftRed
-import com.timrashard.foodorderapp_bootcamp.utils.DialogUtils
+import com.timrashard.foodorderapp_bootcamp.utils.Utils
 import com.timrashard.foodorderapp_bootcamp.utils.Resource
-import kotlinx.coroutines.time.delay
 
 @Composable
 fun FavoritesScreen(
@@ -135,7 +123,7 @@ fun FavoritesScreen(
                                         },
                                         onAddToCartClick = {
                                             sharedViewModel.addFoodToCart(item.toSepetYemekler(siparisAdet = 1), isDetails = true)
-                                            DialogUtils.showToast(context, "Item is added!")
+                                            Utils.showToast(context, "Item is added!")
                                         }
                                     )
                                 }

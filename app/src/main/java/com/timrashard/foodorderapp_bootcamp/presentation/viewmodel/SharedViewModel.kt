@@ -4,7 +4,13 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.timrashard.foodorderapp_bootcamp.data.model.SepetYemekler
+import com.timrashard.foodorderapp_bootcamp.data.model.toSepetYemekModel
+import com.timrashard.foodorderapp_bootcamp.data.repository.FirestoreRepository
 import com.timrashard.foodorderapp_bootcamp.data.repository.FoodRepository
+import com.timrashard.foodorderapp_bootcamp.domain.model.Order
+import com.timrashard.foodorderapp_bootcamp.domain.model.SepetYemekModel
+import com.timrashard.foodorderapp_bootcamp.utils.Resource
+import com.timrashard.foodorderapp_bootcamp.utils.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +21,11 @@ import javax.inject.Inject
 @HiltViewModel
 class SharedViewModel @Inject constructor(
     private val foodRepository: FoodRepository,
+    private val firestoreRepository: FirestoreRepository
 ) : ViewModel() {
+
+    private val _userId = MutableStateFlow("")
+    val userId: StateFlow<String> get() = _userId
 
     private val _cartFoods = MutableStateFlow<List<SepetYemekler>>(emptyList())
     val cartFoods: StateFlow<List<SepetYemekler>> = _cartFoods
@@ -86,5 +96,38 @@ class SharedViewModel @Inject constructor(
                 _itemsCount.value = 0
             }
         }
+    }
+
+    fun createOrder() {
+        viewModelScope.launch {
+            val orderItemList: MutableList<SepetYemekModel> = mutableListOf()
+
+            _cartFoods.value.forEach { item ->
+                orderItemList.add(item.toSepetYemekModel())
+            }
+
+            val totalPrice = _totalPrice.value
+            val order = Order(
+                orderDate = Utils.getCurrentDate(),
+                orderTotalPrice = totalPrice.toString(),
+                orderItems = orderItemList,
+                orderState = "Order Received"
+            )
+
+            val result = firestoreRepository.addOrder(_userId.value, order)
+            when (result) {
+                is Resource.Success -> {
+                    Log.e("SharedViewModel", "Error creating order: ${result.message}")
+                }
+                is Resource.Error -> {
+                    Log.e("SharedViewModel", "Error creating order: ${result.message}")
+                }
+                else -> {}
+            }
+        }
+    }
+
+    fun setUserId(uid: String) {
+        _userId.value = uid
     }
 }

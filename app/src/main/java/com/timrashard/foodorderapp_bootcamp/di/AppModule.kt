@@ -31,7 +31,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideCollectionReference() : CollectionReference {
-        return Firebase.firestore.collection("foods")
+        return Firebase.firestore.collection("ZestUp")
     }
 
     @Provides
@@ -48,7 +48,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideFirestoreDataSource(collectionReference: CollectionReference): FirestoreDataSource{
+    fun provideFireStoreDataSource(collectionReference: CollectionReference): FirestoreDataSource{
         return FirestoreDataSource(collectionReference)
     }
 
@@ -66,7 +66,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideFirestoreRepository(firestoreDataSource: FirestoreDataSource): FirestoreRepository {
+    fun provideFireStoreRepository(firestoreDataSource: FirestoreDataSource): FirestoreRepository {
         return FirestoreRepository(firestoreDataSource)
     }
 

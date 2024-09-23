@@ -101,6 +101,12 @@ fun DashboardScreen(
                 }
             }
 
+            is AuthState.LoggedIn -> {
+                user?.let { currentUser ->
+                    sharedViewModel.setUserId(currentUser.uid)
+                }
+            }
+
             else -> Unit
         }
     }
@@ -205,7 +211,7 @@ fun DashboardScreen(
                     }
 
                     composable(route = Screen.Orders.route) {
-                        OrdersScreen()
+                        OrdersScreen(userId = user?.uid)
                     }
                 }
             }
