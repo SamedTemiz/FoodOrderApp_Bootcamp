@@ -16,6 +16,8 @@ import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -39,6 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -63,10 +66,13 @@ import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
 import com.lottiefiles.dotlottie.core.util.DotLottieSource
 import com.timrashard.foodorderapp_bootcamp.R
 import com.timrashard.foodorderapp_bootcamp.presentation.component.DrawerContent
+import com.timrashard.foodorderapp_bootcamp.presentation.component.ProfileMenuComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.navigation.Screen
+import com.timrashard.foodorderapp_bootcamp.presentation.screen.DropdownMenuComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.AuthState
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.AuthViewModel
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.SharedViewModel
+import com.timrashard.foodorderapp_bootcamp.ui.theme.Jacques
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftGray
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftPink
 import kotlinx.coroutines.CoroutineScope
@@ -211,19 +217,15 @@ fun DashboardScreen(
 fun TopAppBarComponent(
     scope: CoroutineScope,
     drawerState: DrawerState,
-    authViewModel: AuthViewModel
+    authViewModel: AuthViewModel,
 ) {
+    val user = authViewModel.user.collectAsState()
+
     TopAppBar(
         title = {
             Text(
                 text = buildAnnotatedString {
-                    withStyle(
-                        style = SpanStyle(
-                            fontWeight = FontWeight.Light,
-                        )
-                    ) {
-                        append("Zest")
-                    }
+                    append("Zest")
                     withStyle(
                         style = SpanStyle(
                             fontWeight = FontWeight.SemiBold,
@@ -232,6 +234,8 @@ fun TopAppBarComponent(
                         append("Up")
                     }
                 },
+                fontSize = 24.sp,
+                fontFamily = Jacques,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -257,25 +261,31 @@ fun TopAppBarComponent(
             }
         },
         actions = {
-            ElevatedCard(
-                shape = CircleShape,
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.White,
-                ),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 4.dp
-                ),
-                onClick = {
-                    authViewModel.logoutUser()
+            ProfileMenuComponent(
+                menuIcon = {
+                    ElevatedCard(
+                        shape = CircleShape,
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color.White,
+                        ),
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 4.dp
+                        ),
+                        onClick = { it.invoke() },
+                        modifier = Modifier.size(48.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.bear),
+                            contentDescription = "Profile",
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
                 },
-                modifier = Modifier.size(48.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.bear),
-                    contentDescription = "Profile",
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
+                user = user.value?.email ?: "User",
+                onDropItemClick = {
+                    authViewModel.logoutUser()
+                }
+            )
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = Color.White

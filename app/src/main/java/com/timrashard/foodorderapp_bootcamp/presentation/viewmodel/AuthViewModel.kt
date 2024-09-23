@@ -22,7 +22,8 @@ class AuthViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository
 ) : ViewModel() {
 
-    private var auth: FirebaseUser? = null
+    private val _user = MutableStateFlow<FirebaseUser?>(null)
+    val user: StateFlow<FirebaseUser?> = _user
 
     private val _authState = MutableStateFlow<AuthState>(AuthState.Loading)
     val authState: StateFlow<AuthState> = _authState
@@ -37,7 +38,7 @@ class AuthViewModel @Inject constructor(
     val rememberMe: StateFlow<Boolean> = _rememberMe
 
     init {
-        auth = repository.getCurrentUser()
+        _user.value = repository.getCurrentUser()
 
         checkAuthStatus()
         checkRememberMe()
@@ -46,7 +47,7 @@ class AuthViewModel @Inject constructor(
     private fun checkAuthStatus() {
         _authState.value = AuthState.Loading
 
-        if (auth == null) {
+        if (_user.value == null) {
             _authState.value = AuthState.LoggedOut
         } else {
             _authState.value = AuthState.LoggedIn
@@ -62,7 +63,9 @@ class AuthViewModel @Inject constructor(
                     }
 
                     is Resource.Success -> {
+                        _user.value = result.data?.user
                         _authState.value = AuthState.LoggedIn
+
                         if (_rememberMe.value) {
                             saveAuthData()
                         }
@@ -85,7 +88,9 @@ class AuthViewModel @Inject constructor(
                     }
 
                     is Resource.Success -> {
+                        _user.value = result.data?.user
                         _authState.value = AuthState.LoggedIn
+
                         if (_rememberMe.value) {
                             saveAuthData()
                         }

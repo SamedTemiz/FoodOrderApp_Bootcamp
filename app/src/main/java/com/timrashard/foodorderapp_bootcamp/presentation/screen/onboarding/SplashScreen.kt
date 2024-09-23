@@ -34,6 +34,7 @@ import com.lottiefiles.dotlottie.core.util.DotLottieSource
 import com.timrashard.foodorderapp_bootcamp.presentation.component.LoadingComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.navigation.Screen
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.OnBoardViewModel
+import com.timrashard.foodorderapp_bootcamp.ui.theme.Jacques
 import kotlinx.coroutines.delay
 
 @Composable
@@ -97,6 +98,7 @@ fun SplashScreen(
                 }
             },
             fontSize = 42.sp,
+            fontFamily = Jacques,
             textAlign = TextAlign.Center,
             modifier = Modifier.alpha(alpha.value)
         )

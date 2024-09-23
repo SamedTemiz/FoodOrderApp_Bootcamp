@@ -34,24 +34,30 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.timrashard.foodorderapp_bootcamp.R
 import com.timrashard.foodorderapp_bootcamp.presentation.component.AuthTextFieldComponent
+import com.timrashard.foodorderapp_bootcamp.presentation.component.LoadingComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.component.MainButtonComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.navigation.Screen
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.AuthState
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.AuthViewModel
+import com.timrashard.foodorderapp_bootcamp.ui.theme.Jacques
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftLightGray
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftOrange
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftPink
@@ -72,9 +78,14 @@ fun AuthScreen(
     val password by authViewModel.password.collectAsState()
     val rememberMe by authViewModel.rememberMe.collectAsState()
 
+    var showCheckingDialog by remember { mutableStateOf(false) }
+
     LaunchedEffect(authState.value) {
         when (authState.value) {
+            is AuthState.Loading -> showCheckingDialog = true
+
             is AuthState.LoggedIn -> {
+                showCheckingDialog = true
                 Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
                 navController.navigate(Screen.Main.route) {
                     popUpTo(Screen.Welcome.Login.route) { inclusive = true }
@@ -87,7 +98,6 @@ fun AuthScreen(
                 Toast.LENGTH_SHORT
             ).show()
 
-            is AuthState.Loading -> {}
             else -> Unit
         }
     }
@@ -96,8 +106,8 @@ fun AuthScreen(
         authViewModel.checkRememberMe()
     }
 
-    if (authState.value is AuthState.Loading) {
-        CheckingComponent()
+    if (showCheckingDialog) {
+        LoadingComponent(message = "Please wait...")
     }
 
     Column(
@@ -112,25 +122,28 @@ fun AuthScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             ElevatedCard(
-                shape = CircleShape,
+                shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = SoftPink
                 ),
-                modifier = Modifier
-                    .size(72.dp)
-                    .background(color = SoftPink, shape = CircleShape)
+                modifier = Modifier.background(color = SoftPink, shape = CircleShape)
             ) {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.auth),
-                        contentDescription = "Auth",
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier.size(48.dp)
-                    )
-                }
+                Text(
+                    text = buildAnnotatedString {
+                        append("Zest")
+                        withStyle(
+                            style = SpanStyle(
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                        ) {
+                            append("Up")
+                        }
+                    },
+                    fontSize = 28.sp,
+                    fontFamily = Jacques,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
+                )
             }
 
             Text(text = "Login or Register", fontSize = 28.sp, fontWeight = FontWeight.SemiBold)
@@ -206,7 +219,7 @@ fun AuthScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(64.dp))
 
         MainButtonComponent(
             text = if (selectedTabIndex == 0) "Login" else "Register",
@@ -220,7 +233,7 @@ fun AuthScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(64.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         Text(
             "v1.0.0",
@@ -294,27 +307,4 @@ fun CustomTabRow(
     }
 }
 
-@Composable
-fun CheckingComponent() {
-    Dialog(onDismissRequest = {}) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.background(Color.White, shape = RoundedCornerShape(8.dp))
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(36.dp)
-            ) {
-                CircularProgressIndicator(color = SoftOrange)
 
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Text(
-                    text = "Checking...",
-                    modifier = Modifier.padding(top = 16.dp),
-                    color = Color.Black
-                )
-            }
-        }
-    }
-}
