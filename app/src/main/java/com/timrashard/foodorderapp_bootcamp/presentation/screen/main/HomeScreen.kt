@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -36,6 +37,7 @@ import com.dotlottie.dlplayer.Mode
 import com.google.gson.Gson
 import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
 import com.lottiefiles.dotlottie.core.util.DotLottieSource
+import com.timrashard.foodorderapp_bootcamp.data.repository.FirestoreRepository
 import com.timrashard.foodorderapp_bootcamp.presentation.component.HorizontalChipMenuComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.component.ItemCardComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.component.SearchBarComponent
@@ -48,7 +50,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(
     mainNavController: NavController,
-    homeViewModel: HomeViewModel = hiltViewModel()
+    homeViewModel: HomeViewModel = hiltViewModel(),
+    userId: String?
 ) {
     val itemListState by homeViewModel.itemListState.collectAsState()
     val itemSubList = homeViewModel.itemSubLists
@@ -144,9 +147,18 @@ fun HomeScreen(
                                 horizontalArrangement = Arrangement.spacedBy(16.dp)
                             ) {
                                 items(sublist.items, key = { it.yemek_id }) { food ->
+                                    var isFavorite by remember { mutableStateOf(false) }
+
                                     ItemCardComponent(
                                         food = food,
-                                        onFavoriteClick = {},
+                                        onFavoriteClick = {
+                                            if(!isFavorite){
+                                                userId?.let { id ->
+                                                    homeViewModel.addFavorite(userId = id, item = food)
+                                                }
+                                                isFavorite = true
+                                            }
+                                        },
                                         onItemClick = {
                                             val foodJson = Gson().toJson(food)
                                             mainNavController.navigate(Screen.Details.route + "/$foodJson")

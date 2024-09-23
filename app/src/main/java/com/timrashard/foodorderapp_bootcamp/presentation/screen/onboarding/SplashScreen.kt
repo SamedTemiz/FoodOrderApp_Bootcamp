@@ -15,6 +15,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,6 +49,9 @@ fun SplashScreen(
         Animatable(0f)
     }
 
+    val startDestination by viewModel.startDestination.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+
     LaunchedEffect(key1 = true) {
         alpha.animateTo(
             1f,
@@ -54,7 +59,11 @@ fun SplashScreen(
         )
         delay(1000)
 
-        navController.navigate(viewModel.startDestination.value){
+        while(isLoading){
+            delay(100)
+        }
+
+        navController.navigate(startDestination){
             popUpTo(Screen.Welcome.Splash.route) { inclusive = true }
         }
     }

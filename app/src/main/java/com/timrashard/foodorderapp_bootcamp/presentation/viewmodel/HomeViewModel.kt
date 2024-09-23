@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.timrashard.foodorderapp_bootcamp.R
 import com.timrashard.foodorderapp_bootcamp.data.model.Yemekler
 import com.timrashard.foodorderapp_bootcamp.data.model.YemeklerResponse
+import com.timrashard.foodorderapp_bootcamp.data.repository.FirestoreRepository
 import com.timrashard.foodorderapp_bootcamp.data.repository.FoodRepository
 import com.timrashard.foodorderapp_bootcamp.domain.model.ChipItem
 import com.timrashard.foodorderapp_bootcamp.utils.Resource
@@ -20,7 +21,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val foodRepository: FoodRepository
+    private val foodRepository: FoodRepository,
+    private val firestoreRepository: FirestoreRepository
 ) : ViewModel() {
 
     val foodWords = listOf("Izgara Somon", "Izgara Tavuk", "Köfte", "Lazanya", "Makarna", "Pizza")
@@ -94,6 +96,19 @@ class HomeViewModel @Inject constructor(
         )
 
         return chipList
+    }
+
+    // FAVORITES
+
+    fun addFavorite(userId: String, item: Yemekler) {
+        viewModelScope.launch {
+            val result = firestoreRepository.addFavorite(userId, item)
+            if (result is Resource.Success) {
+                // TODO bildirim falan filan
+            } else if (result is Resource.Error) {
+                // TODO bildirim falan filan
+            }
+        }
     }
 }
 

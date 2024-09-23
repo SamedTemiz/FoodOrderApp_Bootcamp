@@ -85,6 +85,7 @@ fun DashboardScreen(
     sharedViewModel: SharedViewModel,
 ) {
     val authState = authViewModel.authState.collectAsState()
+    val user by authViewModel.user.collectAsState()
 
     val cartItemCount by sharedViewModel.itemsCount.collectAsState()
 
@@ -196,11 +197,11 @@ fun DashboardScreen(
                     startDestination = Screen.Home.route
                 ) {
                     composable(route = Screen.Home.route) {
-                        HomeScreen(mainNavController = navController)
+                        HomeScreen(mainNavController = navController, userId = user?.uid)
                     }
 
                     composable(route = Screen.Favorites.route) {
-                        FavoritesScreen()
+                        FavoritesScreen(userId = user?.uid, sharedViewModel = sharedViewModel)
                     }
 
                     composable(route = Screen.Orders.route) {
