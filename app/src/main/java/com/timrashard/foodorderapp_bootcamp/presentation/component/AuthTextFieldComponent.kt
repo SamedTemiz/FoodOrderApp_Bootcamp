@@ -1,6 +1,5 @@
 package com.timrashard.foodorderapp_bootcamp.presentation.component
 
-import android.widget.Space
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer

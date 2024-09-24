@@ -1,7 +1,5 @@
 package com.timrashard.foodorderapp_bootcamp.presentation.viewmodel
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.timrashard.foodorderapp_bootcamp.data.repository.DataStoreRepository
@@ -31,7 +29,7 @@ class OnBoardViewModel @Inject constructor(
                 val onBoardingState = value ?: false
 
                 if (onBoardingState) {
-                    _startDestination.value = Screen.Welcome.Login.route
+                    _startDestination.value = Screen.Welcome.Auth.route
                 } else {
                     _startDestination.value = Screen.Welcome.OnBoard.route
                 }

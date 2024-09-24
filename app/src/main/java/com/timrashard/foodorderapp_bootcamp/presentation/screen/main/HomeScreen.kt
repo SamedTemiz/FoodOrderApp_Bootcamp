@@ -37,7 +37,6 @@ import com.dotlottie.dlplayer.Mode
 import com.google.gson.Gson
 import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
 import com.lottiefiles.dotlottie.core.util.DotLottieSource
-import com.timrashard.foodorderapp_bootcamp.data.repository.FirestoreRepository
 import com.timrashard.foodorderapp_bootcamp.presentation.component.HorizontalChipMenuComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.component.ItemCardComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.component.SearchBarComponent

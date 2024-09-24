@@ -88,7 +88,7 @@ class FirestoreDataSource(var collectionReference: CollectionReference) {
                 .get()
                 .await()
 
-            val ordersList = documents.map { it.toObject(Order::class.java) }
+            val ordersList = documents.map { it.toObject(Order::class.java) }.reversed()
             emit(Resource.Success(ordersList))
         } catch (e: Exception) {
             emit(Resource.Error(e.message.toString()))

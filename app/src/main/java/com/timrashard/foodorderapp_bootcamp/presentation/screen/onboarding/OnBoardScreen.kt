@@ -237,7 +237,7 @@ fun ButtonsSection(
                 onClick = {
                     onBoardViewModel.saveOnBoardingState(completed = true)
 
-                    navController.navigate(Screen.Welcome.Login.route) {
+                    navController.navigate(Screen.Welcome.Auth.route) {
                         popUpTo(Screen.Welcome.OnBoard.route) {
                             inclusive = true
                         }

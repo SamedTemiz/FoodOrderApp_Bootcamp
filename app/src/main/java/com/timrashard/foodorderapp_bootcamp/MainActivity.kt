@@ -4,12 +4,12 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -23,11 +23,11 @@ import com.google.gson.Gson
 import com.timrashard.foodorderapp_bootcamp.data.model.Yemekler
 import com.timrashard.foodorderapp_bootcamp.presentation.navigation.Screen
 import com.timrashard.foodorderapp_bootcamp.presentation.screen.CartScreen
-import com.timrashard.foodorderapp_bootcamp.presentation.screen.main.DashboardScreen
 import com.timrashard.foodorderapp_bootcamp.presentation.screen.DetailsScreen
-import com.timrashard.foodorderapp_bootcamp.presentation.screen.onboarding.OnboardingScreen
 import com.timrashard.foodorderapp_bootcamp.presentation.screen.SuccessScreen
 import com.timrashard.foodorderapp_bootcamp.presentation.screen.auth.AuthScreen
+import com.timrashard.foodorderapp_bootcamp.presentation.screen.main.DashboardScreen
+import com.timrashard.foodorderapp_bootcamp.presentation.screen.onboarding.OnboardingScreen
 import com.timrashard.foodorderapp_bootcamp.presentation.screen.onboarding.SplashScreen
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.AuthViewModel
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.OnBoardViewModel
@@ -50,7 +50,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun FoodOrderApp() {
     val navController = rememberNavController()
-    val scope = rememberCoroutineScope()
 
     val onBoardViewModel: OnBoardViewModel = hiltViewModel()
     val authViewModel: AuthViewModel = hiltViewModel()
@@ -78,7 +77,15 @@ fun FoodOrderApp() {
                         OnboardingScreen(navController = navController)
                     }
 
-                    composable(route = Screen.Welcome.Login.route) {
+                    composable(
+                        route = Screen.Welcome.Auth.route,
+                        exitTransition = {
+                            slideOutOfContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Start,
+                                tween(700)
+                            )
+                        }
+                    ) {
                         AuthScreen(navController = navController, authViewModel = authViewModel)
                     }
                 }
@@ -88,7 +95,14 @@ fun FoodOrderApp() {
                     route = Screen.Main.route,
                     startDestination = Screen.Dashboard.route,
                 ) {
-                    composable(route = Screen.Dashboard.route) {
+                    composable(
+                        route = Screen.Dashboard.route,
+                        enterTransition = {
+                            slideIntoContainer(
+                                AnimatedContentTransitionScope.SlideDirection.End,
+                                tween(700)
+                            )
+                        }) {
                         DashboardScreen(
                             navController = navController,
                             authViewModel = authViewModel,
@@ -101,7 +115,16 @@ fun FoodOrderApp() {
                 composable(route = Screen.Details.route + "/{yemekler}",
                     arguments = listOf(
                         navArgument("yemekler") { type = NavType.StringType }
-                    )
+                    ),
+                    enterTransition = {
+                        fadeIn(tween(700))
+                    },
+                    exitTransition = {
+                        slideOutOfContainer(
+                            AnimatedContentTransitionScope.SlideDirection.End,
+                            tween(700)
+                        )
+                    }
                 ) {
                     val json = it.arguments?.getString("yemekler")
                     val foodObject = Gson().fromJson(json, Yemekler::class.java)
@@ -114,7 +137,11 @@ fun FoodOrderApp() {
                 }
 
                 // Cart Screen
-                composable(route = Screen.Cart.route) {
+                composable(
+                    route = Screen.Cart.route,
+                    enterTransition = {
+                        fadeIn(tween(700))
+                    }) {
                     CartScreen(
                         navController = navController,
                         viewModel = sharedViewModel
@@ -122,7 +149,10 @@ fun FoodOrderApp() {
                 }
 
                 // Success Screen
-                composable(route = Screen.Success.route) {
+                composable(route = Screen.Success.route,
+                    enterTransition = {
+                        fadeIn(tween(700))
+                    }) {
                     SuccessScreen(navController = navController)
                 }
             }
