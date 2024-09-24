@@ -586,7 +586,7 @@ fun DropdownMenuComponent(
             confirmButton = {
                 TextButton(onClick = {
                     viewModel.clearCart()
-                    navController.navigate(Screen.Home.route) {
+                    navController.navigate(Screen.Main.route) {
                         popUpTo(Screen.Cart.route) {
                             inclusive = true
                         }
