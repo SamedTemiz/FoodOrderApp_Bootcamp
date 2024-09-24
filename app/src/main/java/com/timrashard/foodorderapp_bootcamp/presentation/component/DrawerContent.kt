@@ -47,7 +47,7 @@ fun DrawerContent() {
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
-                        text = "TimRashard",
+                        text = "Android Developer",
                         fontSize = 16.sp,
                     )
                 }
