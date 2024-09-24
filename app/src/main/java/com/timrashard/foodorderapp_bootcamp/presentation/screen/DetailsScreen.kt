@@ -166,8 +166,7 @@ fun DetailsScreen(
                             maxLines = 2,
                             lineHeight = 40.sp,
                             overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier
-                                .fillMaxWidth(0.6f)
+                            modifier = Modifier.weight(1f)
                         )
 
                         ItemCountComponent(
@@ -271,6 +270,7 @@ fun ItemCountComponent(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.padding(horizontal = 8.dp)
         ) {
             IconButton(onClick = {
@@ -287,7 +287,7 @@ fun ItemCountComponent(
             Text(
                 text = itemCount.toString(),
                 fontSize = 20.sp,
-                modifier = Modifier.padding(horizontal = 8.dp)
+                modifier = Modifier.padding(horizontal = 4.dp)
             )
 
             IconButton(onClick = {
@@ -296,7 +296,6 @@ fun ItemCountComponent(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_plus),
                     contentDescription = "",
-                    modifier = Modifier.size(24.dp)
                 )
             }
         }

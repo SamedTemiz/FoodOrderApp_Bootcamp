@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
@@ -29,7 +28,8 @@ import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
 import com.lottiefiles.dotlottie.core.util.DotLottieSource
 import com.timrashard.foodorderapp_bootcamp.presentation.navigation.Screen
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.OnBoardViewModel
-import com.timrashard.foodorderapp_bootcamp.ui.theme.Jacques
+import com.timrashard.foodorderapp_bootcamp.ui.theme.Oleo
+import com.timrashard.foodorderapp_bootcamp.ui.theme.OleoBold
 import kotlinx.coroutines.delay
 
 @Composable
@@ -86,21 +86,21 @@ fun SplashScreen(
             text = buildAnnotatedString {
                 withStyle(
                     style = SpanStyle(
-                        fontWeight = FontWeight.Light,
+                        fontFamily = Oleo
                     )
-                ) {
+                ){
                     append("Zest")
                 }
+
                 withStyle(
                     style = SpanStyle(
-                        fontWeight = FontWeight.SemiBold,
+                        fontFamily = OleoBold
                     )
                 ) {
                     append("Up")
                 }
             },
             fontSize = 42.sp,
-            fontFamily = Jacques,
             textAlign = TextAlign.Center,
             modifier = Modifier.alpha(alpha.value)
         )

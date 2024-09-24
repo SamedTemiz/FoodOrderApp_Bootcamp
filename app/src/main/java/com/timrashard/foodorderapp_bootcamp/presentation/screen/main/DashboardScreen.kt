@@ -50,7 +50,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -72,7 +71,8 @@ import com.timrashard.foodorderapp_bootcamp.presentation.navigation.Screen
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.AuthState
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.AuthViewModel
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.SharedViewModel
-import com.timrashard.foodorderapp_bootcamp.ui.theme.Jacques
+import com.timrashard.foodorderapp_bootcamp.ui.theme.Oleo
+import com.timrashard.foodorderapp_bootcamp.ui.theme.OleoBold
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftGray
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftPink
 import kotlinx.coroutines.CoroutineScope
@@ -283,17 +283,23 @@ fun TopAppBarComponent(
         title = {
             Text(
                 text = buildAnnotatedString {
-                    append("Zest")
                     withStyle(
                         style = SpanStyle(
-                            fontWeight = FontWeight.SemiBold,
+                            fontFamily = Oleo
+                        )
+                    ){
+                        append("Zest")
+                    }
+
+                    withStyle(
+                        style = SpanStyle(
+                            fontFamily = OleoBold
                         )
                     ) {
                         append("Up")
                     }
                 },
                 fontSize = 24.sp,
-                fontFamily = Jacques,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )

@@ -48,7 +48,8 @@ import com.timrashard.foodorderapp_bootcamp.presentation.component.MainButtonCom
 import com.timrashard.foodorderapp_bootcamp.presentation.navigation.Screen
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.AuthState
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.AuthViewModel
-import com.timrashard.foodorderapp_bootcamp.ui.theme.Jacques
+import com.timrashard.foodorderapp_bootcamp.ui.theme.Oleo
+import com.timrashard.foodorderapp_bootcamp.ui.theme.OleoBold
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftLightGray
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftOrange
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftPink
@@ -120,17 +121,23 @@ fun AuthScreen(
             ) {
                 Text(
                     text = buildAnnotatedString {
-                        append("Zest")
                         withStyle(
                             style = SpanStyle(
-                                fontWeight = FontWeight.SemiBold,
+                                fontFamily = Oleo
+                            )
+                        ){
+                            append("Zest")
+                        }
+
+                        withStyle(
+                            style = SpanStyle(
+                                fontFamily = OleoBold
                             )
                         ) {
                             append("Up")
                         }
                     },
                     fontSize = 28.sp,
-                    fontFamily = Jacques,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
                 )

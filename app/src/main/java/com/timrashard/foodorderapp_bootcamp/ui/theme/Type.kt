@@ -35,4 +35,5 @@ val Typography = Typography(
     */
 )
 
-val Jacques = FontFamily(Font(R.font.jacquesfrancoisshadow))
+val Oleo = FontFamily(Font(R.font.oleo))
+val OleoBold = FontFamily(Font(R.font.oleo_bold))
