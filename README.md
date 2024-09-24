@@ -14,12 +14,12 @@ Features
 - Coil / Lottie
 - Navigation Components
 
-| Dashboard | Create Task |
+| Auth | Home |
 | ------------- | ------------- |
 | <img src="https://github.com/user-attachments/assets/b3c20bb6-fbda-4fb6-8a39-3a3dbca775d1" alt="Auth" width="300"/> | <img src="https://github.com/user-attachments/assets/50e91dc9-8b7a-4dd3-8eea-68099a93dad6" alt="Home" width="300"/> |
-| Update Task | Search Task |
+| Details | Cart |
 | <img src="https://github.com/user-attachments/assets/4fa2aeca-d27d-453c-9aa6-d274dbb585b1" alt="Details" width="300"/> | <img src="https://github.com/user-attachments/assets/57391246-770a-4f2c-b573-3234788a1e90" alt="Cart" width="300"/> |
-| Update Task | Search Task |
+| Orders | Favorites |
 | <img src="https://github.com/user-attachments/assets/574847fa-46fc-442f-a8c0-e0a248747789" alt="Orders" width="300"/> | <img src="https://github.com/user-attachments/assets/7ccd2b95-eb9f-4942-8358-bbd8b4d1b360" alt="Favorites" width="300"/> |
 
 ---------------------------------------------------------------------------------------------------------------------
