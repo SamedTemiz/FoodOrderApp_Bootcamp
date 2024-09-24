@@ -7,7 +7,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,18 +25,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -54,14 +49,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -76,23 +68,17 @@ import androidx.navigation.NavController
 import coil.compose.SubcomposeAsyncImage
 import com.timrashard.foodorderapp_bootcamp.R
 import com.timrashard.foodorderapp_bootcamp.common.Constants
-import com.timrashard.foodorderapp_bootcamp.data.model.SepetResponse
 import com.timrashard.foodorderapp_bootcamp.data.model.SepetYemekler
-import com.timrashard.foodorderapp_bootcamp.data.model.toSepetYemekModel
-import com.timrashard.foodorderapp_bootcamp.domain.model.Order
 import com.timrashard.foodorderapp_bootcamp.presentation.component.DashedDividerComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.component.MainButtonComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.component.error.SearchErrorComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.navigation.Screen
-import com.timrashard.foodorderapp_bootcamp.presentation.screen.main.FavoriteItem
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.SharedViewModel
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SmokeWhite
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftGray
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftOrange
 import com.timrashard.foodorderapp_bootcamp.ui.theme.SoftPink
-import com.timrashard.foodorderapp_bootcamp.utils.Resource
 import com.timrashard.foodorderapp_bootcamp.utils.Utils
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -158,27 +144,22 @@ fun CartScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(cartFoodList) { food ->
-                        var isVisible by remember { mutableStateOf(true) }
-
-                        AnimatedVisibility(visible = isVisible) {
-                            CartItem(
-                                food = food,
-                                onDeleteClick = {
-                                    isVisible = false
-                                    viewModel.deleteFoodFromCart(food)
-                                },
-                                onCounterPlusClick = {
-                                    val updatedFood = food.copy(yemek_siparis_adet = it)
-                                    viewModel.addFoodToCart(updatedFood, isDetails = false)
-                                    viewModel.calculateTotalPrice()
-                                },
-                                onCounterMinusClick = {
-                                    val updatedFood = food.copy(yemek_siparis_adet = it)
-                                    viewModel.addFoodToCart(updatedFood, isDetails = false)
-                                    viewModel.calculateTotalPrice()
-                                }
-                            )
-                        }
+                        CartItem(
+                            food = food,
+                            onDeleteClick = {
+                                viewModel.deleteFoodFromCart(food)
+                            },
+                            onCounterPlusClick = {
+                                val updatedFood = food.copy(yemek_siparis_adet = it)
+                                viewModel.addFoodToCart(updatedFood, isDetails = false)
+                                viewModel.calculateTotalPrice()
+                            },
+                            onCounterMinusClick = {
+                                val updatedFood = food.copy(yemek_siparis_adet = it)
+                                viewModel.addFoodToCart(updatedFood, isDetails = false)
+                                viewModel.calculateTotalPrice()
+                            }
+                        )
                     }
                 }
             } else {
@@ -465,7 +446,7 @@ fun CartItem(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Row() {
+                        Row {
                             Text(
                                 text = "₺${totalPrice}",
                                 fontSize = 18.sp,

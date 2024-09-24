@@ -1,5 +1,9 @@
 package com.timrashard.foodorderapp_bootcamp.presentation.screen.main
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -16,8 +20,6 @@ import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -41,7 +43,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -68,7 +69,6 @@ import com.timrashard.foodorderapp_bootcamp.R
 import com.timrashard.foodorderapp_bootcamp.presentation.component.DrawerContent
 import com.timrashard.foodorderapp_bootcamp.presentation.component.ProfileMenuComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.navigation.Screen
-import com.timrashard.foodorderapp_bootcamp.presentation.screen.DropdownMenuComponent
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.AuthState
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.AuthViewModel
 import com.timrashard.foodorderapp_bootcamp.presentation.viewmodel.SharedViewModel
@@ -202,15 +202,66 @@ fun DashboardScreen(
                     navController = dashBoardNavController,
                     startDestination = Screen.Home.route
                 ) {
-                    composable(route = Screen.Home.route) {
+                    composable(
+                        route = Screen.Home.route,
+                        enterTransition = {
+                            val fromRoute = initialState.destination.route
+                            when (fromRoute) {
+                                Screen.Favorites.route -> slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(700))
+
+                                Screen.Orders.route -> slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(700))
+
+                                else -> fadeIn(tween(700))
+                            }
+                        },
+                        exitTransition = {
+                            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(700))
+                        }) {
                         HomeScreen(mainNavController = navController, userId = user?.uid)
                     }
 
-                    composable(route = Screen.Favorites.route) {
+                    composable(
+                        route = Screen.Favorites.route,
+                        enterTransition = {
+                            val fromRoute = initialState.destination.route
+                            when (fromRoute) {
+                                Screen.Home.route -> slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(700))
+
+                                Screen.Orders.route -> slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(700))
+
+                                else -> fadeIn(tween(700))
+                            }
+                        },
+                        exitTransition = {
+                            val toRoute = targetState.destination.route
+                            when (toRoute) {
+                                Screen.Home.route -> slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(700))
+
+                                Screen.Orders.route -> slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(700))
+
+                                else -> fadeOut(tween(700))
+                            }
+                        }
+                    ) {
                         FavoritesScreen(userId = user?.uid, sharedViewModel = sharedViewModel)
                     }
 
-                    composable(route = Screen.Orders.route) {
+                    composable(
+                        route = Screen.Orders.route,
+                        enterTransition = {
+                            val fromRoute = initialState.destination.route
+                            when (fromRoute) {
+                                Screen.Home.route -> slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(700))
+
+                                Screen.Favorites.route -> slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(700))
+
+                                else -> fadeIn(tween(700))
+                            }
+                        },
+                        exitTransition = {
+                            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(700))
+                        }
+                    ) {
                         OrdersScreen(userId = user?.uid)
                     }
                 }

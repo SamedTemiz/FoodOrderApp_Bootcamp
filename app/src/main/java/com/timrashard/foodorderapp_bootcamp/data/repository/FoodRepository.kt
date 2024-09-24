@@ -2,14 +2,10 @@ package com.timrashard.foodorderapp_bootcamp.data.repository
 
 import com.timrashard.foodorderapp_bootcamp.data.datasource.FoodDataSource
 import com.timrashard.foodorderapp_bootcamp.data.model.ApiResponse
-import com.timrashard.foodorderapp_bootcamp.data.model.SepetResponse
 import com.timrashard.foodorderapp_bootcamp.data.model.SepetYemekler
-import com.timrashard.foodorderapp_bootcamp.data.model.Yemekler
 import com.timrashard.foodorderapp_bootcamp.data.model.YemeklerResponse
 import com.timrashard.foodorderapp_bootcamp.utils.Resource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class FoodRepository @Inject constructor(

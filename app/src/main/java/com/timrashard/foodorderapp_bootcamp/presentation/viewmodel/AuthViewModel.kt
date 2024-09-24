@@ -7,7 +7,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.timrashard.foodorderapp_bootcamp.data.repository.AuthRepository
 import com.timrashard.foodorderapp_bootcamp.data.repository.DataStoreRepository
-import com.timrashard.foodorderapp_bootcamp.utils.Auth
 import com.timrashard.foodorderapp_bootcamp.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -8,7 +8,7 @@ sealed class Screen(val route: String, val label: String, val icon: Int = R.draw
     object Welcome : Screen(route = "welcome", label = "Welcome") {
         object Splash : Screen(route = "splash", label = "Splash")
         object OnBoard : Screen(route = "onboard", label = "Onboard")
-        object Login : Screen(route = "login", label = "Login")
+        object Auth : Screen(route = "auth", label = "Auth")
     }
 
     // Bottom Bar Screens
